@@ -1,3 +1,4 @@
-const Module = require('./gomoku');
+const Module = require('./build/Module.js');
 
-console.log(Module);
+// console.log(Module);
+let gomoku = new Module.GomokuCore;
