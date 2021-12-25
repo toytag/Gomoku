@@ -1,0 +1,26 @@
+{
+  "name": "gomoku",
+  "version": "0.1.0",
+  "description": "Gomoku built with React, Express, and C++ complied WebAssembly",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toytag/Gomoku.git"
+  },
+  "keywords": [
+    "Gomoku"
+  ],
+  "author": "Zhenzhong Tang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toytag/Gomoku/issues"
+  },
+  "homepage": "https://github.com/toytag/Gomoku#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2"
+  }
+}
