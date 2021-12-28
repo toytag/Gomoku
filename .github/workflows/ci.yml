@@ -15,11 +15,14 @@ jobs:
     container:
       image: trzeci/emscripten:sdk-incoming-64bit
       volumes: 
-        - /GomokuCore:/src
+        - $(pwd)/GomokuCore:/src
     steps:
-      - run: mkdir -p ./build
-      - run: cmake -S ./ -B ./build
-      - run: make -C ./build
+      - name: Create build directory
+        run: mkdir -p ./build && echo $(pwd)
+      - name: CMake
+        run: cmake -S ./ -B ./build
+      - name: Make
+        run: make -C ./build
     
 #   nodejs-build:
 #     runs-on: ubuntu-latest
