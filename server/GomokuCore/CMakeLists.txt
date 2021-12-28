@@ -107,10 +107,12 @@ add_nondebug_compile_flag("-fno-exceptions -s DISABLE_EXCEPTION_CATCHING=1")
 
 add_link_flag("--bind")
 add_link_flag("--whole-archive")
-add_link_flag("-s SINGLE_FILE")
+# add_link_flag("-s SINGLE_FILE")
+# add_link_flag("--no-entry")
+# add_link_flag("-s STANDALONE_WASM")
 add_link_flag("-s ALLOW_MEMORY_GROWTH=1")
 # make the tools immediately usable on Node.js
-add_link_flag("-s NODERAWFS")
+# add_link_flag("-s NODERAWFS")
 
 # clang doesn't print colored diagnostics when invoked from Ninja
 # if(UNIX AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -127,5 +129,5 @@ add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuAgent.cc)
 
 add_executable(Module src/embind.cc)
 target_link_libraries(Module ${PROJECT_NAME})
-# set_target_properties(Module PROPERTIES COMPILE_FLAGS "-O2" LINK_FLAGS "--bind -O2")
+# set_target_properties(Module PROPERTIES SUFFIX ".wasm")
 
