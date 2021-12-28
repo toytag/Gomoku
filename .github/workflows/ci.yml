@@ -12,16 +12,16 @@ on:
 jobs:
   wasm-build:
     runs-on: ubuntu-latest
+
     container:
       image: trzeci/emscripten:sdk-incoming-64bit
-      volumes: 
-        - GomokuCore:/src
+
     steps:
-      - name: Create build directory
-        run: mkdir -p ./build && echo $(pwd)
-      - name: CMake
+      - name: chdir & mkdir
+        run: cd GomokuCore && mkdir -p ./build
+      - name: cmake
         run: cmake -S ./ -B ./build
-      - name: Make
+      - name: make
         run: make -C ./build
     
 #   nodejs-build:
