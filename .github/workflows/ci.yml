@@ -15,7 +15,7 @@ jobs:
     container:
       image: trzeci/emscripten:sdk-incoming-64bit
       volumes: 
-        - $(pwd)/GomokuCore:/src
+        - GomokuCore:/src
     steps:
       - name: Create build directory
         run: mkdir -p ./build && echo $(pwd)
