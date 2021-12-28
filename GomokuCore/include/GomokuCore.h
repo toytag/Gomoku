@@ -4,33 +4,35 @@
 #include <array>
 #include <cstdint>
 
+#define BOARD_SIZE 15
+
+enum class GomokuPiece : uint8_t
+{
+    EMPTY = 0,
+    BLACK = 1,
+    WHITE = 2
+};
+
 class GomokuCore
 {
-private:
-    // maximum depth for minimax algorithm
-    static constexpr uint8_t MAX_DEPTH = 5;
-    // gomoku board size is usually 15x15
-    static constexpr uint8_t BOARD_SIZE = 15;
+protected:
+    // gomoku board represented as a 1d array
+    std::array<GomokuPiece, BOARD_SIZE * BOARD_SIZE> board{GomokuPiece::EMPTY};
 
 public:
-    enum class Piece : uint8_t
-    {
-        EMPTY = 0,
-        // player is black, black goes first
-        BLACK = 1,
-        // computer is white, white goes second
-        WHITE = 2
-    };
-    std::array<std::array<Piece, BOARD_SIZE>, BOARD_SIZE> board{Piece::EMPTY};
-    std::array<std::array<Piece, BOARD_SIZE>, BOARD_SIZE> get_board() const;
-
     // constructor
     GomokuCore() = default;
     // destructor
     ~GomokuCore() = default;
 
-    // void player_move(uint8_t x, uint8_t y);
-    // int check_winner();
+    // get the piece at the given row and column
+    GomokuPiece get_board_at(int row, int col) const;
+    // set the piece at the given row and column
+    void set_board_at(int row, int col, GomokuPiece piece);
+    // player makes a move
+    void player_move(int row, int col, GomokuPiece piece);
+    // check and return the winner
+    GomokuPiece check_winner();
 };
 
 #endif // GOMOKUCORE_H
