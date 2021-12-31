@@ -40,7 +40,7 @@ export default function Board() {
             <Square
               value={value_}
               onClick={() => {
-                wasmModule.instance.set_board_at(i, j, wasmModule.GomokuPiece.BLACK);
+                wasmModule.instance.play(i, j);
                 sendSigUpdate();
               }}
             />

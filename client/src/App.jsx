@@ -14,6 +14,7 @@ import Control from './components/Control';
 const HeaderWrapper = styled(Box)({
   width: '100%',
   minHeight: '12.5vh',
+  paddingTop: '2.5vh',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -21,8 +22,7 @@ const HeaderWrapper = styled(Box)({
 
 const BodyWrapper = styled(Box)({
   width: '100%',
-  minHeight: '72.5vh',
-  maxHeight: '87.5vh',
+  minHeight: '70vh',
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',

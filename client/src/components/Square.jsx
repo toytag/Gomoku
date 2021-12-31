@@ -7,11 +7,21 @@ import Fade from '@mui/material/Fade';
 import { useWasmModule } from '../utils/WasmModuleContext';
 
 const StyledIconButton = styled(IconButton)({
+  position: 'relative',
+  padding: 0,
   maxWidth: 55,
   maxHeight: 55,
   width: '100%',
   height: '100%',
+});
+
+const StyledImg = styled('img')({
+  width: '100%',
+  height: '100%',
   padding: '8%',
+  position: 'absolute',
+  top: 0,
+  left: 0,
 });
 
 export default function Square({ value, onClick }) {
@@ -24,37 +34,13 @@ export default function Square({ value, onClick }) {
       // disableFocusRipple
     >
       <Fade in={value === wasmModule.GomokuPiece.EMPTY}>
-        <img
-          src="Empty.svg"
-          alt="Empty"
-          width="100%"
-          height="100%"
-          style={{
-            display: value === wasmModule.GomokuPiece.EMPTY ? 'block' : 'none',
-          }}
-        />
+        <StyledImg src="Empty.svg" alt="Empty" />
       </Fade>
       <Fade in={value === wasmModule.GomokuPiece.BLACK}>
-        <img
-          src="Black.svg"
-          alt="Black"
-          width="100%"
-          height="100%"
-          style={{
-            display: value === wasmModule.GomokuPiece.BLACK ? 'block' : 'none',
-          }}
-        />
+        <StyledImg src="Black.svg" alt="Black" />
       </Fade>
       <Fade in={value === wasmModule.GomokuPiece.WHITE}>
-        <img
-          src="Empty.svg"
-          alt="Empty"
-          width="100%"
-          height="100%"
-          style={{
-            display: value === wasmModule.GomokuPiece.WHITE ? 'block' : 'none',
-          }}
-        />
+        <StyledImg src="White.svg" alt="White" />
       </Fade>
     </StyledIconButton>
   );

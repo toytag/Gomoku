@@ -1,6 +1,6 @@
 #include "GomokuCore.h"
 
-GomokuPiece GomokuCore::get_board_at(int row, int col) const
+GomokuPiece GomokuCore::get_board_at(uint8_t row, uint8_t col) const
 {
     // out of bounds
     if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE)
@@ -8,7 +8,7 @@ GomokuPiece GomokuCore::get_board_at(int row, int col) const
     return board[row * BOARD_SIZE + col];
 }
 
-void GomokuCore::set_board_at(int row, int col, GomokuPiece piece)
+void GomokuCore::set_board_at(uint8_t row, uint8_t col, GomokuPiece piece)
 {
     // out of bounds
     if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE)
@@ -16,19 +16,29 @@ void GomokuCore::set_board_at(int row, int col, GomokuPiece piece)
     board[row * BOARD_SIZE + col] = piece;
 }
 
-void GomokuCore::player_move(int row, int col, GomokuPiece piece)
+void GomokuCore::play(uint8_t row, uint8_t col)
 {
     // non-empty
     if (get_board_at(row, col) != GomokuPiece::EMPTY)
         return;
-    set_board_at(row, col, piece);
+    set_board_at(row, col, history.size() % 2 == 0 ? GomokuPiece::BLACK : GomokuPiece::WHITE);
+    history.push(std::make_pair(row, col));
+}
+
+void GomokuCore::withdraw()
+{
+    // empty
+    if (history.empty())
+        return;
+    set_board_at(history.top().first, history.top().second, GomokuPiece::EMPTY);
+    history.pop();
 }
 
 GomokuPiece GomokuCore::check_winner()
 {
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (uint8_t i = 0; i < BOARD_SIZE; i++)
     {
-        for (int j = 0; j < BOARD_SIZE; j++)
+        for (uint8_t j = 0; j < BOARD_SIZE; j++)
         {
             if (get_board_at(i, j) == GomokuPiece::EMPTY)
                 continue;

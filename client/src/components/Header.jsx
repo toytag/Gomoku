@@ -38,6 +38,7 @@ export default function Header() {
           }
         }}
         size={sm ? 'medium' : 'small'}
+        color="info"
         exclusive
       >
         <ToggleButton value="pvp">
@@ -45,7 +46,7 @@ export default function Header() {
             <AccountCircleIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="pvc">
+        <ToggleButton value="pvc" disabled>
           <Tooltip title="Play against the computer">
             <DeveloperBoardIcon />
           </Tooltip>

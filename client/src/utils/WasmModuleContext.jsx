@@ -9,7 +9,7 @@ const WasmModuleContext = React.createContext(null);
 export const useWasmModule = () => useContext(WasmModuleContext);
 export function WasmModuleProvider({ children }) {
   const [wasmModule, setWasmModule] = useState(null);
-  // update boardcast
+  // update signal
   const [sigUpdate, setSigUpdate] = useState(0);
   // pvp for player vs player, pvc for player vs computer
   const [mode, setMode] = useState('pvp');
@@ -27,8 +27,15 @@ export function WasmModuleProvider({ children }) {
   // solution offered by react/jsx-no-constructed-context-values
   const value = useMemo(() => ({
     wasmModule,
+    resetInstance: () => setWasmModule((prevWasmModule) => {
+      prevWasmModule.instance.delete();
+      return {
+        ...prevWasmModule,
+        instance: new prevWasmModule.GomokuCore(),
+      };
+    }),
     sigUpdate,
-    sendSigUpdate: () => setSigUpdate((sigUpdate_) => sigUpdate_ + 1),
+    sendSigUpdate: () => setSigUpdate((sigUpdate_) => 1 - sigUpdate_),
     mode,
     setMode,
   }), [wasmModule, sigUpdate, mode]);

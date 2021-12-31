@@ -37,7 +37,8 @@ EMSCRIPTEN_BINDINGS(class)
         .function("get_board_at", &GomokuCore::get_board_at)
         .function("set_board_at", &GomokuCore::set_board_at)
         .function("get_board", &get_board)
-        .function("player_move", &GomokuCore::player_move)
+        .function("play", &GomokuCore::play)
+        .function("withdraw", &GomokuCore::withdraw)
         .function("check_winner", &GomokuCore::check_winner)
         ;
 }

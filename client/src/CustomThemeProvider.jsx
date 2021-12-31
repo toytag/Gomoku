@@ -39,7 +39,14 @@ export default function CustomThemeProvider({ children }) {
               main: '#98C379',
             },
           }
-          : {}
+          : {
+            primary: {
+              main: '#58B0D9',
+            },
+            success: {
+              main: '#50A14F',
+            },
+          }
         ),
       },
     }),

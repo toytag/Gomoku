@@ -1,5 +1,5 @@
-[![CI](https://github.com/toytag/Gomoku/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/toytag/Gomoku/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/toytag/Gomoku/actions/workflows/cicd.yml/badge.svg?branch=main)](https://github.com/toytag/Gomoku/actions/workflows/cicd.yml)
 
 # Gomoku
 
-Gomoku built with React, Express, and C++ complied WebAssembly
+Gomoku board game built with React and C++ complied WebAssembly

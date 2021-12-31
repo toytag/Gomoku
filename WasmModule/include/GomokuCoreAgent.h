@@ -5,7 +5,7 @@
 
 #define MAX_DEPTH 5
 
-class GomokuAgent : public GomokuCore
+class GomokuCoreAgent : public GomokuCore
 {
     // computer makes a move using minimax algorithm
     void computer_move_minimax();

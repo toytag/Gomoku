@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -13,35 +13,56 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function Control() {
-  const smallScreen = useMediaQuery('(max-width:925px)');
+import { useWasmModule } from '../utils/WasmModuleContext';
 
-  const [open, setOpen] = React.useState(false);
+export default function Control() {
+  const { wasmModule, resetInstance, sendSigUpdate } = useWasmModule();
+  // ui related hooks
+  const smallScreen = useMediaQuery('(max-width:950px)');
+  const [open, setOpen] = useState(false);
+
+  const handleWithdraw = () => {
+    wasmModule.instance.withdraw();
+    sendSigUpdate();
+  };
+
+  const handleRestartConfirm = () => {
+    resetInstance();
+    sendSigUpdate();
+    setOpen(false);
+  };
 
   return (
     <Box margin={1}>
+
       <ButtonGroup
         variant="contained"
         orientation={smallScreen ? 'horizontal' : 'vertical'}
         disableElevation
       >
+
         <Button
           disabled
         >
           Hint
         </Button>
+
         <Button
           color="success"
+          onClick={handleWithdraw}
         >
           Withdraw
         </Button>
+
         <Button
           onClick={() => setOpen(true)}
           color="error"
         >
           Restart
         </Button>
+
       </ButtonGroup>
+
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -59,16 +80,14 @@ export default function Control() {
         <DialogActions>
           <Button onClick={() => setOpen(false)} autoFocus>Cancel</Button>
           <Button
-            onClick={() => {
-              setOpen(false);
-              window.location.reload();
-            }}
+            onClick={handleRestartConfirm}
             color="warning"
           >
             Confirm
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 }

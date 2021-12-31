@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-project(Gomoku VERSION 0.1.0)
+project(GomokuCore VERSION 0.1.0)
 set(CXX_STANDARD 17)
 
 # build type
@@ -98,6 +98,7 @@ add_compile_flag("-Wextra")
 add_debug_compile_flag("-O0")
 add_debug_compile_flag("-g3")
 add_debug_compile_flag("-Werror")
+add_debug_compile_flag("-fsanitize=undefined")
 
 add_nondebug_compile_flag("-O2")
 # in opt builds, LTO helps so much (>20%) it's worth slow compile times
@@ -130,10 +131,8 @@ add_link_flag("-s MODULARIZE=1")
 
 
 # Targets ---------------------------------------------------------------------
-add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuAgent.cc)
+add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuCoreAgent.cc)
 
 add_executable(WasmModule src/embind.cc)
 target_link_libraries(WasmModule ${PROJECT_NAME})
-
 # set_target_properties(WasmModule PROPERTIES SUFFIX ".wasm")
-
