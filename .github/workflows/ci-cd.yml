@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  wasm-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +23,13 @@ jobs:
       run: emcmake cmake -S WasmModule -B WasmModule/build
     - name: make
       run: emmake make -C WasmModule/build
-        
+  
+  react-build:
+    needs: wasm-build
+    
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Setup Node.js environment
       uses: actions/setup-node@v2
       with:
@@ -47,3 +53,5 @@ jobs:
       with:
         # Build directory to deploy
         build_dir: client/build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
