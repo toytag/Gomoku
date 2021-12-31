@@ -1,0 +1,20 @@
+{
+  "short_name": "Gomoku",
+  "name": "Gomoku board game built with React and C++ complied WebAssembly",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "512x512 192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "rgba(0,0,0,0)",
+  "background_color": "rgba(0,0,0,0)"
+}
