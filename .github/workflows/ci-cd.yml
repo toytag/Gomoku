@@ -17,21 +17,25 @@ jobs:
       image: trzeci/emscripten:sdk-incoming-64bit
 
     steps:
+      - name: ls
+        run: ls -al
       - name: mkdir
         run: mkdir -p WasmModule/build
       - name: cmake
         run: cmake -S WasmModule -B WasmModule/build
       - name: make
         run: make -C WasmModule/build
-      # - name: cp
-      #   run: cp WasmModule/build/WasmModule.js client/src/WasmModule.js
     
   nodejs-build:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: ls
+      run: ls -al
+    - name: chdir
+      run: cd client
+    - name: Use Node.js 16.x
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
