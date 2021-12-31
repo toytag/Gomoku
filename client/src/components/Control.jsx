@@ -2,6 +2,8 @@ import React from 'react';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import Box from '@mui/material/Box';
+
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
@@ -17,27 +19,29 @@ export default function Control() {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <ButtonGroup
-      variant="contained"
-      orientation={smallScreen ? 'horizontal' : 'vertical'}
-      disableElevation
-    >
-      <Button
-        disabled
+    <Box margin={1}>
+      <ButtonGroup
+        variant="contained"
+        orientation={smallScreen ? 'horizontal' : 'vertical'}
+        disableElevation
       >
-        Hint
-      </Button>
-      <Button
-        color="success"
-      >
-        Withdraw
-      </Button>
-      <Button
-        onClick={() => setOpen(true)}
-        color="error"
-      >
-        Restart
-      </Button>
+        <Button
+          disabled
+        >
+          Hint
+        </Button>
+        <Button
+          color="success"
+        >
+          Withdraw
+        </Button>
+        <Button
+          onClick={() => setOpen(true)}
+          color="error"
+        >
+          Restart
+        </Button>
+      </ButtonGroup>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -65,6 +69,6 @@ export default function Control() {
           </Button>
         </DialogActions>
       </Dialog>
-    </ButtonGroup>
+    </Box>
   );
 }

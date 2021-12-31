@@ -22,6 +22,7 @@ const HeaderWrapper = styled(Box)({
 const BodyWrapper = styled(Box)({
   width: '100%',
   minHeight: '72.5vh',
+  maxHeight: '87.5vh',
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',
