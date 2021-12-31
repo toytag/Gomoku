@@ -18,11 +18,14 @@ jobs:
     - name: Setup Emscripten toolchain
       uses: mymindstorm/setup-emsdk@v11
     - name: mkdir
-      run: mkdir -p WasmModule/build
+      run: mkdir -p build
+      working-directory: WasmModule
     - name: cmake
-      run: emcmake cmake -S WasmModule -B WasmModule/build
+      run: emcmake cmake -S ./ -B ./build
+      working-directory: WasmModule
     - name: make
-      run: emmake make -C WasmModule/build
+      run: emmake make -C ./build
+      working-directory: WasmModule
   
   react-build:
     needs: wasm-build
@@ -34,7 +37,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
-        cache: 'npm'
         cache-dependency-path: client/package-lock.json
     - name: install
       run: npm install
