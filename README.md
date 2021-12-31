@@ -1,4 +1,4 @@
-[![CI/CD](https://github.com/toytag/Gomoku/actions/workflows/cicd.yml/badge.svg?branch=main)](https://github.com/toytag/Gomoku/actions/workflows/cicd.yml)
+[![CI/CD](https://github.com/toytag/Gomoku/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/toytag/Gomoku/actions/workflows/ci-cd.yml)
 
 # Gomoku
 
