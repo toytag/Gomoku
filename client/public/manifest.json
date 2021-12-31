@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Gomoku",
+  "name": "Gomoku board game built with React and C++ complied WebAssembly",
   "icons": [
     {
       "src": "favicon.ico",
