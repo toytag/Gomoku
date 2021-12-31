@@ -1,13 +1,18 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 
 import createWasmModule from './WasmModule';
 
 const WasmModuleContext = React.createContext(null);
 
 export const useWasmModule = () => useContext(WasmModuleContext);
-export function WasmModuleProvider({ mode, children }) {
+export function WasmModuleProvider({ children }) {
   const [wasmModule, setWasmModule] = useState(null);
+  // update boardcast
   const [sigUpdate, setSigUpdate] = useState(0);
+  // pvp for player vs player, pvc for player vs computer
+  const [mode, setMode] = useState('pvp');
 
   useEffect(() => {
     createWasmModule({ noInitialRun: true, noExitRuntime: true })
@@ -22,10 +27,11 @@ export function WasmModuleProvider({ mode, children }) {
   // solution offered by react/jsx-no-constructed-context-values
   const value = useMemo(() => ({
     wasmModule,
-    mode,
     sigUpdate,
     sendSigUpdate: () => setSigUpdate((sigUpdate_) => sigUpdate_ + 1),
-  }), [wasmModule, sigUpdate]);
+    mode,
+    setMode,
+  }), [wasmModule, sigUpdate, mode]);
 
   return (
     wasmModule && (

@@ -11,6 +11,8 @@ parserOptions:
   sourceType: module
 plugins:
   - react
+ignorePatterns:
+  - "WasmModule.js"
 rules: {
   react/prop-types: "off"
 }

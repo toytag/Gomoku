@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import styled from '@mui/material/styles/styled';
 import IconButton from '@mui/material/IconButton';
-import Grow from '@mui/material/Grow';
+import Fade from '@mui/material/Fade';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 
@@ -23,7 +23,7 @@ export default function Square({ value, onClick }) {
       disabled={value !== wasmModule.GomokuPiece.EMPTY}
       // disableFocusRipple
     >
-      <Grow in={value === wasmModule.GomokuPiece.EMPTY}>
+      <Fade in={value === wasmModule.GomokuPiece.EMPTY}>
         <img
           src="Empty.svg"
           alt="Empty"
@@ -33,8 +33,8 @@ export default function Square({ value, onClick }) {
             display: value === wasmModule.GomokuPiece.EMPTY ? 'block' : 'none',
           }}
         />
-      </Grow>
-      <Grow in={value === wasmModule.GomokuPiece.BLACK}>
+      </Fade>
+      <Fade in={value === wasmModule.GomokuPiece.BLACK}>
         <img
           src="Black.svg"
           alt="Black"
@@ -44,8 +44,8 @@ export default function Square({ value, onClick }) {
             display: value === wasmModule.GomokuPiece.BLACK ? 'block' : 'none',
           }}
         />
-      </Grow>
-      <Grow in={value === wasmModule.GomokuPiece.WHITE}>
+      </Fade>
+      <Fade in={value === wasmModule.GomokuPiece.WHITE}>
         <img
           src="Empty.svg"
           alt="Empty"
@@ -55,7 +55,7 @@ export default function Square({ value, onClick }) {
             display: value === wasmModule.GomokuPiece.WHITE ? 'block' : 'none',
           }}
         />
-      </Grow>
+      </Fade>
     </StyledIconButton>
   );
 }

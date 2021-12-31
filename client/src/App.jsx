@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import { BrowserRouter as Router } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -31,22 +31,21 @@ const BodyWrapper = styled(Box)({
 });
 
 export default function App() {
-  // pvp for player vs player, pvc for player vs computer
-  const [mode, setMode] = useState('pvc');
-
   return (
     <CustomThemeProvider>
 
-      <HeaderWrapper>
-        <Header mode={mode} setMode={setMode} />
-      </HeaderWrapper>
+      <WasmModuleProvider>
 
-      <BodyWrapper>
-        <WasmModuleProvider mode={mode}>
+        <HeaderWrapper>
+          <Header />
+        </HeaderWrapper>
+
+        <BodyWrapper>
           <Board />
           <Control />
-        </WasmModuleProvider>
-      </BodyWrapper>
+        </BodyWrapper>
+
+      </WasmModuleProvider>
 
     </CustomThemeProvider>
   );

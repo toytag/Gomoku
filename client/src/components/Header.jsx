@@ -10,7 +10,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 
-export default function Header({ mode, setMode }) {
+import { useWasmModule } from '../utils/WasmModuleContext';
+
+export default function Header() {
+  const { mode, setMode } = useWasmModule();
   const sm = useMediaQuery(('(min-width:600px)'));
 
   return (

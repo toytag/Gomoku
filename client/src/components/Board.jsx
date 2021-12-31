@@ -1,22 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import Box from '@mui/material/Box';
-// import Grid from '@mui/material/Grid';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 import Square from './Square';
 
 export default function Board() {
   const { wasmModule, sigUpdate, sendSigUpdate } = useWasmModule();
-
-  // const board = wasmModule.instance.get_board().map((row_) => (
-  //   row_.map((value_) => {
-  //     const [value, setValue] = useState(value_);
-  //     return { value, setValue };
-  //   })
-  // ));
-
-  // const winner = useMemo()
   const board = useMemo(() => wasmModule.instance.get_board(), [sigUpdate]);
 
   return (
@@ -57,32 +47,6 @@ export default function Board() {
           </Box>
         ))
       ))}
-      {/* <Grid
-        container
-        direction="column"
-        padding="1.5625%"
-        // width="100%"
-        // height="100%"
-        // lineHeight="1"
-      >
-        {board.map((row_, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Grid container item key={i}>
-            {row_.map(({ value, setValue }, j) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Grid item key={j} xs>
-                <Square
-                  value={value}
-                  onClick={() => {
-                    wasmModule.instance.set_board_at(i, j, wasmModule.GomokuPiece.BLACK);
-                    setValue(wasmModule.GomokuPiece.BLACK);
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        ))}
-      </Grid> */}
     </Box>
   );
 }
