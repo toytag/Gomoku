@@ -14,8 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup Emscripten
-        uses: lovasoa/setup-emscripten@v1
+      - uses: actions/checkout@v2
+      - name: Setup Emscripten toolchain
+        uses: mymindstorm/setup-emsdk@v11
       - name: mkdir
         run: mkdir -p WasmModule/build
       - name: cmake
@@ -29,8 +30,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: ls
-      run: ls -al
     - name: chdir
       run: cd client
     - name: Setup Node.js environment
@@ -38,7 +37,7 @@ jobs:
       with:
         node-version: 16.x
     - name: install
-      run: npm ci
+      run: npm install
     - name: lint
       run: npm run lint
     - name: test
