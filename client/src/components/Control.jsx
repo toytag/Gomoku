@@ -26,6 +26,8 @@ export default function Control() {
     sendSigUpdate();
   };
 
+  const handleRestartCancel = () => setOpen(false);
+
   const handleRestartConfirm = () => {
     resetInstance();
     sendSigUpdate();
@@ -67,7 +69,7 @@ export default function Control() {
 
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleRestartCancel}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -80,7 +82,7 @@ export default function Control() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} autoFocus>Cancel</Button>
+          <Button onClick={handleRestartCancel} autoFocus>Cancel</Button>
           <Button
             onClick={handleRestartConfirm}
             color="warning"

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import styled from '@mui/system/styled';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
@@ -13,6 +14,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 import Square from './Square';
+
+const StyledGreenText = styled('span')(({ theme }) => ({
+  color: theme.palette.success.main,
+}));
+
+const StyledRedText = styled('span')(({ theme }) => ({
+  color: theme.palette.error.main,
+}));
 
 export default function Board() {
   const {
@@ -85,9 +94,15 @@ export default function Board() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Use the green withdraw button to revise your move or
-            <br />
-            use restart button to reset the game.
+            Use the
+            {' '}
+            <StyledGreenText>WITHDRAW</StyledGreenText>
+            {' '}
+            button to revise your move or use the
+            {' '}
+            <StyledRedText>RESTART</StyledRedText>
+            {' '}
+            button to reset the game.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styled from '@mui/material/styles/styled';
+import styled from '@mui/system/styled';
 import IconButton from '@mui/material/IconButton';
 import Fade from '@mui/material/Fade';
 

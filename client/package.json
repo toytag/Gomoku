@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.6",
+    "@mui/system": "^5.2.6",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -18,10 +19,17 @@
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage --forceExit",
     "eject": "react-scripts eject",
-    "lint": "eslint --ext .js,.jsx ./src",
-    "link": "ln -s ../../../WasmModule/build/WasmModule.js ./src/utils/WasmModule.js"
+    "lint": "eslint --ext .js,.jsx ./src"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.jsx",
+      "!src/reportWebVitals.js",
+      "!src/setupTests.js"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -42,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.16.7",
     "eslint": "^8.5.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.3",

@@ -7,6 +7,7 @@ import createWasmModule from './WasmModule';
 const WasmModuleContext = React.createContext(null);
 
 export const useWasmModule = () => useContext(WasmModuleContext);
+
 export function WasmModuleProvider({ children }) {
   const [wasmModule, setWasmModule] = useState(null);
   // update signal
@@ -15,13 +16,18 @@ export function WasmModuleProvider({ children }) {
   const [mode, setMode] = useState('pvp');
 
   useEffect(() => {
+    // prevent updating unmounted component
+    let isSubscribed = true;
     createWasmModule({ noInitialRun: true, noExitRuntime: true })
       .then((module_) => {
-        setWasmModule({
-          ...module_,
-          instance: new module_.GomokuCore(),
-        });
+        if (isSubscribed) {
+          setWasmModule({
+            ...module_,
+            instance: new module_.GomokuCore(),
+          });
+        }
       });
+    return () => { isSubscribed = false; };
   }, []);
 
   // solution offered by react/jsx-no-constructed-context-values
@@ -40,13 +46,9 @@ export function WasmModuleProvider({ children }) {
     setMode,
   }), [wasmModule, sigUpdate, mode]);
 
-  return (
-    wasmModule && (
-      <WasmModuleContext.Provider
-        value={value}
-      >
-        {children}
-      </WasmModuleContext.Provider>
-    )
-  );
+  return wasmModule ? (
+    <WasmModuleContext.Provider value={value}>
+      {children}
+    </WasmModuleContext.Provider>
+  ) : null;
 }

@@ -12,6 +12,7 @@ parserOptions:
 plugins:
   - react
 ignorePatterns:
+  - "tests/"
   - "WasmModule.js"
 rules: {
   react/prop-types: "off"
