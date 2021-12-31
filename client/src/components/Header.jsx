@@ -47,7 +47,7 @@ export default function Header() {
           </Tooltip>
         </ToggleButton>
         <ToggleButton value="pvc" disabled>
-          <Tooltip title="Play against the computer">
+          <Tooltip title="Play against simple AI">
             <DeveloperBoardIcon />
           </Tooltip>
         </ToggleButton>

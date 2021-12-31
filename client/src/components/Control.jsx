@@ -36,18 +36,19 @@ export default function Control() {
     <Box margin={1}>
 
       <ButtonGroup
-        variant="contained"
         orientation={smallScreen ? 'horizontal' : 'vertical'}
-        disableElevation
+        // disableElevation
       >
 
         <Button
+          variant="contained"
           disabled
         >
           Hint
         </Button>
 
         <Button
+          variant="contained"
           color="success"
           onClick={handleWithdraw}
         >
@@ -55,8 +56,9 @@ export default function Control() {
         </Button>
 
         <Button
-          onClick={() => setOpen(true)}
+          variant="contained"
           color="error"
+          onClick={() => setOpen(true)}
         >
           Restart
         </Button>

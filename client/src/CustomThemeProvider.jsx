@@ -43,6 +43,9 @@ export default function CustomThemeProvider({ children }) {
             primary: {
               main: '#58B0D9',
             },
+            error: {
+              main: '#e04646',
+            },
             success: {
               main: '#50A14F',
             },

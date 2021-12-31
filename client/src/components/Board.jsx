@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 import Square from './Square';
@@ -10,7 +11,9 @@ export default function Board() {
   const board = useMemo(() => wasmModule.instance.get_board(), [sigUpdate]);
 
   return (
-    <Box
+    <Paper
+      elevation={12}
+      overflow="hidden"
       sx={{
         position: 'relative',
         // default max board size is 800px by 800px
@@ -18,6 +21,11 @@ export default function Board() {
         margin: 1,
         // set line-height to 0 to prevent the grid from being offset
         lineHeight: 0,
+        // contain board
+        overflow: 'hidden',
+        borderRadius: '2%',
+        // bg color same as board
+        backgroundColor: '#DBB35B',
       }}
     >
       <img src="Board.svg" alt="Board" width="100%" height="100%" />
@@ -47,6 +55,6 @@ export default function Board() {
           </Box>
         ))
       ))}
-    </Box>
+    </Paper>
   );
 }
