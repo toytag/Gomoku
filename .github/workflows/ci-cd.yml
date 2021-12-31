@@ -21,7 +21,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: WasmModule/build
-        key: ${{ hashFiles('WasmModule/build') }}
+        key: ${{ runner.os }}-${{ hashFiles('WasmModule/build') }}
     - name: mkdir
       run: mkdir -p build
       working-directory: WasmModule
@@ -49,7 +49,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: client/build
-        key: ${{ hashFiles('client/build') }}
+        key: ${{ runner.os }}-${{ hashFiles('client/build') }}
     - name: install
       run: npm install
       working-directory: client
