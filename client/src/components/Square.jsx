@@ -1,23 +1,38 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import IconButton from "@mui/material/IconButton";
+import styled from '@mui/material/styles/styled';
+import IconButton from '@mui/material/IconButton';
 
-function Square({ value, onClick }) {
+import { useWasmModule } from '../utils/WasmModuleContext';
+
+const StyledIconButton = styled(IconButton)({
+  maxWidth: 55,
+  maxHeight: 55,
+  width: '100%',
+  height: '100%',
+  padding: '8%',
+});
+
+export default function Square({ value, onClick }) {
+  const wasmModule = useWasmModule();
+
+  const piece = useMemo(() => {
+    switch (value) {
+      case wasmModule.GomokuPiece.BLACK:
+        return (<img src="Black.svg" alt="Black" width="100%" height="100%" />);
+      case wasmModule.GomokuPiece.WHITE:
+        return (<img src="White.svg" alt="White" width="100%" height="100%" />);
+      default:
+        return (<img src="Empty.svg" alt="Empty" width="100%" height="100%" />);
+    }
+  }, [value]);
 
   return (
-    <IconButton 
-      sx={{
-        width: 200,
-        height: 200,
-      }}
-      // onClick={onClick}
+    <StyledIconButton
+      onClick={onClick}
+      disabled={value !== wasmModule.GomokuPiece.EMPTY}
     >
-      {
-        
-      }
-      <img src='Black.svg' width="100%"/>
-    </IconButton>
+      {piece}
+    </StyledIconButton>
   );
 }
-
-export default Square;

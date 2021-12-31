@@ -105,14 +105,19 @@ add_nondebug_compile_flag("-flto")
 add_nondebug_compile_flag("-fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
 add_nondebug_compile_flag("-fno-exceptions -s DISABLE_EXCEPTION_CATCHING=1")
 
+# embind
 add_link_flag("--bind")
+# no main function
+add_link_flag("--no-entry")
+# link static library
 add_link_flag("--whole-archive")
-# add_link_flag("-s SINGLE_FILE")
-# add_link_flag("--no-entry")
-# add_link_flag("-s STANDALONE_WASM")
+# only output js
+add_link_flag("-s SINGLE_FILE")
+# heap memory growthable
 add_link_flag("-s ALLOW_MEMORY_GROWTH=1")
-# make the tools immediately usable on Node.js
-# add_link_flag("-s NODERAWFS")
+# critical for react, only working with these flags
+add_link_flag("-s ENVIRONMENT=web")
+add_link_flag("-s MODULARIZE=1")
 
 # clang doesn't print colored diagnostics when invoked from Ninja
 # if(UNIX AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -127,7 +132,8 @@ add_link_flag("-s ALLOW_MEMORY_GROWTH=1")
 # Targets ---------------------------------------------------------------------
 add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuAgent.cc)
 
-add_executable(Module src/embind.cc)
-target_link_libraries(Module ${PROJECT_NAME})
-# set_target_properties(Module PROPERTIES SUFFIX ".wasm")
+add_executable(WasmModule src/embind.cc)
+target_link_libraries(WasmModule ${PROJECT_NAME})
+
+# set_target_properties(WasmModule PROPERTIES SUFFIX ".wasm")
 

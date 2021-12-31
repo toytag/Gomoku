@@ -17,12 +17,14 @@ jobs:
       image: trzeci/emscripten:sdk-incoming-64bit
 
     steps:
-      - name: chdir & mkdir
-        run: cd GomokuCore && mkdir -p ./build
+      - name: mkdir
+        run: mkdir -p WasmModule/build
       - name: cmake
-        run: cmake -S ./ -B ./build
+        run: cmake -S WasmModule -B WasmModule/build
       - name: make
-        run: make -C ./build
+        run: make -C WasmModule/build
+      # - name: cp
+      #   run: cp WasmModule/build/WasmModule.js client/src/WasmModule.js
     
 #   nodejs-build:
 #     runs-on: ubuntu-latest

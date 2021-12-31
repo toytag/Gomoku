@@ -22,7 +22,7 @@ val get_board(GomokuCore& instance)
         val row = val::array();
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            row.call<void>("push", (int)instance.get_board_at(i, j));
+            row.call<void>("push", instance.get_board_at(i, j));
         }
         board.call<void>("push", row);
     }
