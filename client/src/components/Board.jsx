@@ -1,44 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 
-import styled from '@mui/system/styled';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-
-import Button from '@mui/material/Button';
-
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 import Square from './Square';
 
-const StyledGreenText = styled('span')(({ theme }) => ({
-  color: theme.palette.success.main,
-}));
-
-const StyledRedText = styled('span')(({ theme }) => ({
-  color: theme.palette.error.main,
-}));
-
 export default function Board() {
-  const {
-    wasmModule, sigUpdate, sendSigUpdate,
-  } = useWasmModule();
-  const board = useMemo(() => wasmModule.instance.get_board(), [sigUpdate]);
-  const winner = useMemo(() => wasmModule.instance.check_winner(), [sigUpdate]);
-
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    setOpen(winner !== wasmModule.GomokuPiece.EMPTY);
-  }, [winner]);
+  const wasmModule = useWasmModule();
 
   return (
     <Paper
       elevation={12}
-      overflow="hidden"
       sx={{
         position: 'relative',
         // default max board size is 800px by 800px
@@ -54,7 +27,7 @@ export default function Board() {
       }}
     >
       <img src="Board.svg" alt="Board" width="100%" height="100%" />
-      {board.map((row_, i) => (
+      {wasmModule.backend.get_board().map((row_, i) => (
         row_.map((value_, j) => (
           <Box
             // eslint-disable-next-line react/no-array-index-key
@@ -70,46 +43,10 @@ export default function Board() {
               height: `${55 / 8.5}%`,
             }}
           >
-            <Square
-              value={value_}
-              onClick={() => {
-                if (winner === wasmModule.GomokuPiece.EMPTY) {
-                  wasmModule.instance.play(i, j);
-                  sendSigUpdate();
-                }
-              }}
-            />
+            <Square row={i} col={j} />
           </Box>
         ))
       ))}
-
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {`${winner === wasmModule.GomokuPiece.BLACK ? 'BLACK' : 'WHITE'} is the winner!`}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Use the
-            {' '}
-            <StyledGreenText>WITHDRAW</StyledGreenText>
-            {' '}
-            button to revise your move or use the
-            {' '}
-            <StyledRedText>RESTART</StyledRedText>
-            {' '}
-            button to reset the game.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} autoFocus>Continue</Button>
-        </DialogActions>
-      </Dialog>
-
     </Paper>
   );
 }

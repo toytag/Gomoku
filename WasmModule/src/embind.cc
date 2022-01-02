@@ -1,4 +1,5 @@
 #include "GomokuCore.h"
+#include "GomokuCoreWithAgent.h"
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
@@ -11,6 +12,7 @@ EMSCRIPTEN_BINDINGS(type)
         .value("EMPTY", GomokuPiece::EMPTY)
         .value("BLACK", GomokuPiece::BLACK)
         .value("WHITE", GomokuPiece::WHITE)
+        .value("BOARDER", GomokuPiece::BOARDER);
         ;
 }
 
@@ -29,6 +31,15 @@ val get_board(GomokuCore& instance)
     return board;
 }
 
+val withdraw(GomokuCore& instance)
+{
+    auto last = instance.withdraw();
+    val ret = val::array();
+    ret.call<void>("push", last.first);
+    ret.call<void>("push", last.second);
+    return ret;
+}
+
 // class binding
 EMSCRIPTEN_BINDINGS(class)
 {
@@ -37,8 +48,13 @@ EMSCRIPTEN_BINDINGS(class)
         .function("get_board_at", &GomokuCore::get_board_at)
         .function("set_board_at", &GomokuCore::set_board_at)
         .function("get_board", &get_board)
-        .function("play", &GomokuCore::play)
-        .function("withdraw", &GomokuCore::withdraw)
+        .function("move", &GomokuCore::move)
+        .function("withdraw", &withdraw)
         .function("check_winner", &GomokuCore::check_winner)
+        ;
+    
+    class_<GomokuCoreWithAgent, base<GomokuCore>>("GomokuCoreWithAgent")
+        .constructor<>()
+        .function("evaluate", &GomokuCoreWithAgent::evaluate)
         ;
 }

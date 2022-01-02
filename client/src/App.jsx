@@ -1,11 +1,9 @@
 import React from 'react';
-// import { BrowserRouter as Router } from 'react-router-dom';
 
 import styled from '@mui/system/styled';
 import Box from '@mui/material/Box';
 
 import { WasmModuleProvider } from './utils/WasmModuleContext';
-
 import CustomThemeProvider from './CustomThemeProvider';
 import Header from './components/Header';
 import Board from './components/Board';

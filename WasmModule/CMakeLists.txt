@@ -102,7 +102,7 @@ add_debug_compile_flag("-fsanitize=undefined")
 
 add_nondebug_compile_flag("-O2")
 # in opt builds, LTO helps so much (>20%) it's worth slow compile times
-# add_nondebug_compile_flag("-flto")
+add_nondebug_compile_flag("-flto")
 add_nondebug_compile_flag("-fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
 add_nondebug_compile_flag("-fno-exceptions -s DISABLE_EXCEPTION_CATCHING=1")
 
@@ -131,7 +131,7 @@ add_link_flag("-s MODULARIZE=1")
 
 
 # Targets ---------------------------------------------------------------------
-add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuCoreAgent.cc)
+add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuCoreWithAgent.cc)
 
 add_executable(WasmModule src/embind.cc)
 target_link_libraries(WasmModule ${PROJECT_NAME})
