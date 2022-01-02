@@ -11,7 +11,8 @@ enum class GomokuPiece : uint8_t
 {
     EMPTY = 0,
     BLACK = 1,
-    WHITE = 2
+    WHITE = 2,
+    BOARDER = 3,
 };
 
 class GomokuCore
@@ -29,13 +30,15 @@ public:
     ~GomokuCore() = default;
 
     // get the piece at the given row and column
-    GomokuPiece get_board_at(uint8_t row, uint8_t col) const;
+    GomokuPiece get_board_at(int row, int col) const;
     // set the piece at the given row and column
-    void set_board_at(uint8_t row, uint8_t col, GomokuPiece piece);
+    void set_board_at(int row, int col, GomokuPiece piece);
+    // get current player based on history, black first
+    GomokuPiece get_current_player() const;
     // player makes a move
-    void play(uint8_t row, uint8_t col);
+    GomokuPiece move(int row, int col);
     // withdraw the last move
-    void withdraw();
+    std::pair<int, int> withdraw();
     // check and return the winner
     GomokuPiece check_winner();
 };

@@ -1,8 +1,7 @@
 {
   "name": "gomoku",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gomoku board game built with React and C++ complied WebAssembly",
-  "homepage": "https://toytag.github.io/Gomoku/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -52,7 +51,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.16.7",
     "eslint": "^8.5.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.3",

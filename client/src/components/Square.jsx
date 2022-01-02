@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styled from '@mui/system/styled';
 import IconButton from '@mui/material/IconButton';
@@ -24,22 +24,33 @@ const StyledImg = styled('img')({
   left: 0,
 });
 
-export default function Square({ value, onClick }) {
-  const { wasmModule } = useWasmModule();
+export default function Square({ row, col }) {
+  const wasmModule = useWasmModule();
+
+  const [piece, setPiece] = useState(wasmModule.backend.get_board_at(row, col));
+
+  useEffect(() => {
+    wasmModule.board[row][col] = { piece, setPiece };
+  }, [piece]);
 
   return (
     <StyledIconButton
-      onClick={onClick}
-      disabled={value !== wasmModule.GomokuPiece.EMPTY}
-      // disableFocusRipple
+      onClick={async () => {
+        if (wasmModule.winner.winner === wasmModule.GomokuPiece.EMPTY) {
+          setPiece(wasmModule.backend.move(row, col));
+          // possible to put in to a promise to inprove ui responsiveness
+          wasmModule.winner.setWinner(wasmModule.backend.check_winner());
+        }
+      }}
+      disabled={piece !== wasmModule.GomokuPiece.EMPTY}
     >
-      <Fade in={value === wasmModule.GomokuPiece.EMPTY}>
+      <Fade in={piece === wasmModule.GomokuPiece.EMPTY}>
         <StyledImg src="Empty.svg" alt="Empty" />
       </Fade>
-      <Fade in={value === wasmModule.GomokuPiece.BLACK}>
+      <Fade in={piece === wasmModule.GomokuPiece.BLACK}>
         <StyledImg src="Black.svg" alt="Black" />
       </Fade>
-      <Fade in={value === wasmModule.GomokuPiece.WHITE}>
+      <Fade in={piece === wasmModule.GomokuPiece.WHITE}>
         <StyledImg src="White.svg" alt="White" />
       </Fade>
     </StyledIconButton>

@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 
 import { useWasmModule } from '../utils/WasmModuleContext';
 
 export default function Header() {
-  const { mode, setMode } = useWasmModule();
+  const wasmModule = useWasmModule();
+  // pvp for player vs player, pvc for player vs computer
+  const [mode, setMode] = useState('pvp');
+  // ui related hooks
   const sm = useMediaQuery(('(min-width:600px)'));
+
+  useEffect(() => {
+    wasmModule.mode = mode;
+  }, [mode]);
 
   return (
     <>

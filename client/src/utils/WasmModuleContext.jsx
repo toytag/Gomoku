@@ -1,6 +1,4 @@
-import React, {
-  useContext, useEffect, useMemo, useState,
-} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import createWasmModule from './WasmModule';
 
@@ -10,10 +8,6 @@ export const useWasmModule = () => useContext(WasmModuleContext);
 
 export function WasmModuleProvider({ children }) {
   const [wasmModule, setWasmModule] = useState(null);
-  // update signal
-  const [sigUpdate, setSigUpdate] = useState(0);
-  // pvp for player vs player, pvc for player vs computer
-  const [mode, setMode] = useState('pvp');
 
   useEffect(() => {
     // prevent updating unmounted component
@@ -21,33 +15,24 @@ export function WasmModuleProvider({ children }) {
     createWasmModule({ noInitialRun: true, noExitRuntime: true })
       .then((module_) => {
         if (isSubscribed) {
-          setWasmModule({
-            ...module_,
-            instance: new module_.GomokuCore(),
-          });
+          const modifiedModule = module_;
+          // webassembly backend
+          modifiedModule.backend = new modifiedModule.GomokuCoreWithAgent();
+          // used to withdraw a move, reset game, states are defined at Sqaure.jsx
+          // need this to get the setter for the square, without causing any rerender
+          modifiedModule.board = modifiedModule.backend.get_board();
+          // used to determine the winner of the game, states are defined at Control.jsx
+          modifiedModule.winner = { winner: modifiedModule.GomokuPiece.EMPTY };
+          // used to determine the mode of the game, states are defined at Header.jsx
+          modifiedModule.mode = null;
+          setWasmModule(modifiedModule);
         }
       });
     return () => { isSubscribed = false; };
   }, []);
 
-  // solution offered by react/jsx-no-constructed-context-values
-  const value = useMemo(() => ({
-    wasmModule,
-    resetInstance: () => setWasmModule((prevWasmModule) => {
-      prevWasmModule.instance.delete();
-      return {
-        ...prevWasmModule,
-        instance: new prevWasmModule.GomokuCore(),
-      };
-    }),
-    sigUpdate,
-    sendSigUpdate: () => setSigUpdate((sigUpdate_) => 1 - sigUpdate_),
-    mode,
-    setMode,
-  }), [wasmModule, sigUpdate, mode]);
-
   return wasmModule ? (
-    <WasmModuleContext.Provider value={value}>
+    <WasmModuleContext.Provider value={wasmModule}>
       {children}
     </WasmModuleContext.Provider>
   ) : null;
