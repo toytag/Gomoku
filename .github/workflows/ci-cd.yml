@@ -86,7 +86,7 @@ jobs:
         name: client-build
         path: ./build
 
-     - name: deploy
+    - name: deploy
       uses: crazy-max/ghaction-github-pages@v2
       with:
         # Build directory to deploy
