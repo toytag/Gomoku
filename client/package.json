@@ -2,6 +2,7 @@
   "name": "gomoku",
   "version": "1.0.1",
   "description": "Gomoku board game built with React and C++ complied WebAssembly",
+  "homepage": "toytag.github.io/Gomoku",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
