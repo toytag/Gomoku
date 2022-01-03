@@ -86,8 +86,10 @@ jobs:
         name: client-build
         path: ./build
 
-    - name: deploy
-      uses: peaceiris/actions-gh-pages@v3
+     - name: deploy
+      uses: crazy-max/ghaction-github-pages@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+        # Build directory to deploy
+        build_dir: ./build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
