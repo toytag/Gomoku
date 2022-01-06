@@ -1,6 +1,7 @@
 {
   "name": "gomoku",
   "description": "Gomoku board game built with React, Redux, and C++ complied WebAssembly",
+  "homepage": "https://toytag.github.io/Gomoku/",
   "version": "0.1.0-ts",
   "private": true,
   "dependencies": {
