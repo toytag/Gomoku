@@ -28,13 +28,12 @@ jobs:
     - name: make
       run: emmake make -C ./build
       working-directory: WasmModule
-
-    - name: cache-wasm-build
-      uses: actions/cache@v2
+    
+    - name: upload-wasm-build
+      uses: actions/upload-artifact@v2
       with:
+        name: WasmModule-build
         path: WasmModule/build
-        key: ${{ runner.os }}-${{ hashFiles('WasmModule/build/**') }}
-
   
   react-build:
     needs: wasm-build
@@ -49,11 +48,12 @@ jobs:
         node-version: 16.x
         cache: 'npm'
         cache-dependency-path: client/package-lock.json
-    - name: cache-wasm-build
-      uses: actions/cache@v2
+
+    - name: download-wasm-build
+      uses: actions/download-artifact@v2
       with:
+        name: WasmModule-build
         path: WasmModule/build
-        key: ${{ runner.os }}-${{ hashFiles('WasmModule/build/**') }}
 
     - name: install
       run: npm install
@@ -68,11 +68,11 @@ jobs:
       run: npm run build --if-present
       working-directory: client
 
-    - name: cache-react-build
-      uses: actions/cache@v2
+    - name: upload-react-build
+      uses: actions/upload-artifact@v2
       with:
+        name: client-build
         path: client/build
-        key: ${{ runner.os }}-${{ hashFiles('client/build/**') }}
 
 
   gh-pages:
@@ -80,16 +80,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: cache-react-build
-      uses: actions/cache@v2
+    - name: download-react-build
+      uses: actions/download-artifact@v2
       with:
-        path: client/build
-        key: ${{ runner.os }}-${{ hashFiles('client/build/**') }}
+        name: client-build
+        path: ./build
 
     - name: deploy
       uses: crazy-max/ghaction-github-pages@v2
       with:
         # Build directory to deploy
-        build_dir: client/build
+        build_dir: ./build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
