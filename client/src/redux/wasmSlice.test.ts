@@ -5,7 +5,7 @@ describe('mode reducer', () => {
   const initialState: WasmState = {
     module: undefined,
     instance: undefined,
-    mode: 'pve',
+    mode: 'pvp',
     board: [],
     winner: undefined,
     status: 'init',
