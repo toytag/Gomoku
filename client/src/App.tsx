@@ -1,15 +1,14 @@
 import React from 'react';
-
+// material-ui
 import styled from '@mui/system/styled';
 import Box from '@mui/material/Box';
-
-import { WasmModuleProvider } from './utils/WasmModuleContext';
-import CustomThemeProvider from './CustomThemeProvider';
-import Header from './components/Header';
+// components
+import CustomThemeProvider from './theme/CustomThemeProvider';
+import AppBar from './components/AppBar';
 import Board from './components/Board';
 import Control from './components/Control';
 
-const HeaderWrapper = styled(Box)({
+const HeadWrapper = styled(Box)({
   width: '100%',
   minHeight: '12.5vh',
   paddingTop: '2.5vh',
@@ -28,23 +27,19 @@ const BodyWrapper = styled(Box)({
   alignItems: 'center',
 });
 
-export default function App() {
+function App() {
   return (
     <CustomThemeProvider>
+      <HeadWrapper>
+        <AppBar />
+      </HeadWrapper>
 
-      <WasmModuleProvider>
-
-        <HeaderWrapper>
-          <Header />
-        </HeaderWrapper>
-
-        <BodyWrapper>
-          <Board />
-          <Control />
-        </BodyWrapper>
-
-      </WasmModuleProvider>
-
+      <BodyWrapper>
+        <Board />
+        <Control />
+      </BodyWrapper>
     </CustomThemeProvider>
   );
 }
+
+export default App;
