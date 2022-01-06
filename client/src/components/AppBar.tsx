@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-
+import React from 'react';
+// material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -7,19 +7,16 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
+// redux
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { selectMode, setMode } from '../redux/wasmSlice';
 
-import { useWasmModule } from '../utils/WasmModuleContext';
-
-export default function Header() {
-  const wasmModule = useWasmModule();
+export default function AppBar() {
   // pvp for player vs player, pvc for player vs computer
-  const [mode, setMode] = useState('pvp');
+  const mode = useAppSelector(selectMode);
+  const dispatch = useAppDispatch();
   // ui related hooks
   const sm = useMediaQuery(('(min-width:600px)'));
-
-  useEffect(() => {
-    wasmModule.mode = mode;
-  }, [mode]);
 
   return (
     <>
@@ -39,7 +36,7 @@ export default function Header() {
         value={mode}
         onChange={(event, newMode) => {
           if (newMode !== null) {
-            setMode(newMode);
+            dispatch(setMode(newMode));
           }
         }}
         size={sm ? 'medium' : 'small'}
@@ -51,7 +48,7 @@ export default function Header() {
             <AccountCircleIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="pvc" disabled>
+        <ToggleButton value="pve" disabled>
           <Tooltip title="Play against simple AI">
             <DeveloperBoardIcon />
           </Tooltip>

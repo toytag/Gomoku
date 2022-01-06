@@ -4,16 +4,22 @@ env:
 extends:
   - plugin:react/recommended
   - airbnb
+  - airbnb-typescript
+parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaFeatures:
     jsx: true
-  ecmaVersion: 12
+  ecmaVersion: 13
   sourceType: module
+  project:
+    - tsconfig.json
 plugins:
   - react
+  - '@typescript-eslint'
 ignorePatterns:
-  - "tests/"
-  - "WasmModule.js"
+  - WasmModule.js
+  - serviceWorker.ts
+  - "*.test.*"
 rules: {
-  react/prop-types: "off"
+  no-param-reassign: ["error", { "props": false }]
 }
