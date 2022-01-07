@@ -4,7 +4,7 @@
 
 Gomoku board game built with React, Redux, and C++ complied WebAssembly
 
-![Demo](info/demo.jpg)
+![UI](https://github.com/toytag/Gomoku/blob/info/ui.jpg)
 
 ## Reference
 - Create React App, https://create-react-app.dev/
