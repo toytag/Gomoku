@@ -13,6 +13,8 @@ public:
     // destructor
     ~GomokuCoreWithAgent() = default;
 
+    // player makes a move
+    GomokuPiece move(const int row, const int col);
     // situation evaluation of the current player
     int evaluate();
     // minimax with alpha-beta pruning

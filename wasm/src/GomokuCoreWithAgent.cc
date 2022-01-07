@@ -1,5 +1,11 @@
 #include "GomokuCoreWithAgent.h"
 
+GomokuPiece GomokuCoreWithAgent::move(const int row, const int col)
+{
+    GomokuPiece piece = GomokuCore::move(row, col);
+    return piece;
+}
+
 int GomokuCoreWithAgent::evaluate()
 {
     int score = 0;

@@ -17,7 +17,7 @@ enum class GomokuPiece : uint8_t
 
 class GomokuCore
 {
-protected:
+private:
     // gomoku board represented as a 1d array
     std::array<GomokuPiece, BOARD_SIZE * BOARD_SIZE> board{GomokuPiece::EMPTY};
     // history of moves

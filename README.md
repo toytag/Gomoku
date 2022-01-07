@@ -3,3 +3,10 @@
 # Gomoku
 
 Gomoku board game built with React, Redux, and C++ complied WebAssembly
+
+![Demo](info/demo.jpg)
+
+## Reference
+- Create React App, https://create-react-app.dev/
+- Redux Toolkit, https://redux-toolkit.js.org/
+- Gomoku AI, https://sortingsearching.com/2020/05/18/gomoku.html
