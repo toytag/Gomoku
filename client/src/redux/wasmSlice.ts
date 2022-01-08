@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
-import createWasmModule from './WasmModule';
+import createWasmModule from './wasm';
 
 export interface WasmState {
   module: any;
@@ -35,7 +35,7 @@ export const initAsync = createAsyncThunk(
       module,
       instance,
       board: instance.get_board(),
-      winner: instance.check_winner(),
+      winner: instance.get_winner(),
     };
   },
 );
@@ -50,7 +50,7 @@ export const wasmSlice = createSlice({
     move: (state, action: PayloadAction<{ row: number, col: number }>) => {
       const { row, col } = action.payload;
       state.board[row][col] = state.instance.move(row, col);
-      state.winner = state.instance.check_winner();
+      state.winner = state.instance.get_winner();
       // TODO: mode
     },
     withdraw: (state) => {
@@ -58,14 +58,14 @@ export const wasmSlice = createSlice({
       if (row !== -1 && col !== -1) {
         state.board[row][col] = state.module.GomokuPiece.EMPTY;
       }
-      state.winner = state.instance.check_winner();
+      state.winner = state.instance.get_winner();
       // TODO: mode
     },
     reset: (state) => {
       state.instance.delete();
       state.instance = new state.module.GomokuCoreWithAgent();
       state.board = state.instance.get_board();
-      state.winner = state.instance.check_winner();
+      state.winner = state.instance.get_winner();
     },
   },
   extraReducers: (builder) => {

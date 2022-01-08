@@ -131,8 +131,8 @@ add_link_flag("-s MODULARIZE=1")
 
 
 # Targets ---------------------------------------------------------------------
-add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/GomokuCoreWithAgent.cc)
+add_library(${PROJECT_NAME} STATIC src/GomokuCore.cc src/MonteCarloTreeSearch.cc src/GomokuCoreWithAgent.cc)
 
-add_executable(WasmModule src/embind.cc)
-target_link_libraries(WasmModule ${PROJECT_NAME})
-# set_target_properties(WasmModule PROPERTIES SUFFIX ".wasm")
+add_executable(wasm src/embind.cc)
+target_link_libraries(wasm ${PROJECT_NAME})
+# set_target_properties(wasm PROPERTIES SUFFIX ".wasm")

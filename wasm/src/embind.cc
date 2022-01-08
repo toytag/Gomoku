@@ -16,7 +16,7 @@ EMSCRIPTEN_BINDINGS(type)
         ;
 }
 
-val get_board(GomokuCore& instance)
+val get_board(GomokuCoreWithAgent& instance)
 {
     val board = val::array();
     for (int i = 0; i < BOARD_SIZE; i++)
@@ -31,12 +31,12 @@ val get_board(GomokuCore& instance)
     return board;
 }
 
-val withdraw(GomokuCore& instance)
+val withdraw(GomokuCoreWithAgent& instance)
 {
-    auto last = instance.withdraw();
+    auto pos = instance.withdraw();
     val ret = val::array();
-    ret.call<void>("push", last.first);
-    ret.call<void>("push", last.second);
+    ret.call<void>("push", pos.first);
+    ret.call<void>("push", pos.second);
     return ret;
 }
 
@@ -46,15 +46,16 @@ EMSCRIPTEN_BINDINGS(class)
     class_<GomokuCore>("GomokuCore")
         .constructor<>()
         .function("get_board_at", &GomokuCore::get_board_at)
-        .function("set_board_at", &GomokuCore::set_board_at)
         .function("get_board", &get_board)
+        .function("get_current_player", &GomokuCore::get_current_player)
+        .function("get_winner", &GomokuCore::get_winner)
         .function("move", &GomokuCore::move)
         .function("withdraw", &withdraw)
-        .function("check_winner", &GomokuCore::check_winner)
         ;
     
     class_<GomokuCoreWithAgent, base<GomokuCore>>("GomokuCoreWithAgent")
         .constructor<>()
-        .function("evaluate", &GomokuCoreWithAgent::evaluate)
+        .function("move", &GomokuCoreWithAgent::move)
+        .function("withdraw", &withdraw)
         ;
 }

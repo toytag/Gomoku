@@ -22,6 +22,18 @@ private:
     std::array<GomokuPiece, BOARD_SIZE * BOARD_SIZE> board{GomokuPiece::EMPTY};
     // history of moves
     std::stack<std::pair<uint8_t, uint8_t>> history;
+    // winner
+    GomokuPiece winner{GomokuPiece::EMPTY};
+
+protected:
+    // set the piece at the given row and column
+    void set_board_at(int row, int col, GomokuPiece piece);
+    // push the given move to the history
+    void push_move(int row, int col);
+    // pop the last move from the history
+    void pop_move();
+    // set the winner
+    void set_winner(GomokuPiece winner);
 
 public:
     // constructor
@@ -30,17 +42,18 @@ public:
     ~GomokuCore() = default;
 
     // get the piece at the given row and column
-    GomokuPiece get_board_at(int row, int col) const;
-    // set the piece at the given row and column
-    void set_board_at(int row, int col, GomokuPiece piece);
+    GomokuPiece get_board_at(int row, int col);
     // get current player based on history, black first
-    GomokuPiece get_current_player() const;
+    GomokuPiece get_current_player();
+    // get the last move
+    std::pair<int, int> get_last_move();
+    // get the winner
+    GomokuPiece get_winner();
+
     // player makes a move
     GomokuPiece move(int row, int col);
     // withdraw the last move
     std::pair<int, int> withdraw();
-    // check and return the winner
-    GomokuPiece check_winner();
 };
 
 #endif // GOMOKUCORE_H

@@ -17,8 +17,10 @@ plugins:
   - react
   - '@typescript-eslint'
 ignorePatterns:
-  - WasmModule.js
+  - wasm.js
+  - reportWebVitals.js
   - serviceWorker.ts
+  - setupTests.ts
   - "*.test.*"
 rules: {
   no-param-reassign: ["error", { "props": false }]
