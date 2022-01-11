@@ -11,10 +11,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 // redux
+import { GomokuPiece } from 'gomoku-core';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  selectModule, selectWinner, selectStatus, withdraw, reset,
-} from '../redux/wasmSlice';
+  selectWinner, withdraw, reset,
+} from '../redux/backendSlice';
 
 const StyledGreenText = styled('span')(({ theme }) => ({
   color: theme.palette.success.main,
@@ -25,10 +26,9 @@ const StyledRedText = styled('span')(({ theme }) => ({
 }));
 
 export default function Control() {
-  const wasmModule = useAppSelector(selectModule);
   const winner = useAppSelector(selectWinner);
-  // check if status === 'loaded' before using wasmModule
-  const status = useAppSelector(selectStatus);
+  // check if status === 'loaded' before using
+  // const status = useAppSelector(selectStatus);
   const dispatch = useAppDispatch();
 
   // ui related hooks
@@ -36,9 +36,7 @@ export default function Control() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const [gameEndDialogOpen, setGameEndDialogOpen] = useState(false);
   useEffect(() => {
-    if (status === 'loaded') {
-      setGameEndDialogOpen(winner !== wasmModule.GomokuPiece.EMPTY);
-    }
+    setGameEndDialogOpen(winner !== GomokuPiece.EMPTY);
   }, [winner]);
 
   const handleWithdraw = () => dispatch(withdraw());
@@ -68,7 +66,7 @@ export default function Control() {
           variant="contained"
           color="success"
           onClick={handleWithdraw}
-          disabled={status !== 'loaded'}
+          // disabled={status !== 'loaded'}
         >
           Withdraw
         </Button>
@@ -77,7 +75,7 @@ export default function Control() {
           variant="contained"
           color="error"
           onClick={handleRestart}
-          disabled={status !== 'loaded'}
+          // disabled={status !== 'loaded'}
         >
           Restart
         </Button>
@@ -116,9 +114,7 @@ export default function Control() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {status === 'loaded'
-            ? `${winner === wasmModule.GomokuPiece.BLACK ? 'BLACK' : 'WHITE'} is the winner!`
-            : ''}
+          {`${winner === GomokuPiece.BLACK ? 'BLACK' : 'WHITE'} is the winner!`}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

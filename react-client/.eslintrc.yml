@@ -23,5 +23,6 @@ ignorePatterns:
   - setupTests.ts
   - "*.test.*"
 rules: {
-  no-param-reassign: ["error", { "props": false }]
+  "no-param-reassign": ["error", { "props": false }],
+  "@typescript-eslint/lines-between-class-members": "off",
 }

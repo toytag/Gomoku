@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import wasmReducer from './wasmSlice';
+import backendReducer from './backendSlice';
 
 export const store = configureStore({
   reducer: {
-    wasm: wasmReducer,
+    backend: backendReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,

@@ -9,7 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 // redux
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { selectMode, setMode } from '../redux/wasmSlice';
+import { selectMode, setMode } from '../redux/backendSlice';
 
 export default function AppBar() {
   // pvp for player vs player, pvc for player vs computer
@@ -48,7 +48,7 @@ export default function AppBar() {
             <AccountCircleIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value="pve" disabled>
+        <ToggleButton value="pve">
           <Tooltip title="Play against simple AI">
             <DeveloperBoardIcon />
           </Tooltip>
