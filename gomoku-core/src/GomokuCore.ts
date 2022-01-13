@@ -1,78 +1,83 @@
-export enum GomokuPiece {
+export enum Piece {
   EMPTY = 0,
   BLACK = 1,
   WHITE = 2,
   BOARDER = 3,
 }
 
+export type Move = readonly [number, number];
+
 export default class GomokuCore {
   static readonly BOARD_SIZE = 15;
 
-  board: GomokuPiece[][];
+  private board: Piece[][];
   
-  history: [number, number][];
+  private history: Move[];
 
-  winner: GomokuPiece;
-
-  static fromHistory(history: [number, number][]): GomokuCore {
-    const board = new GomokuCore();
-    for (let i = 0; i < history.length; i += 1) {
-      board.move(history[i][0], history[i][1]);
-    }
-    return board;
-  }
+  private winner: Piece;
 
   constructor() {
     this.board = new Array(GomokuCore.BOARD_SIZE).fill(0).map(
-      () => new Array(GomokuCore.BOARD_SIZE).fill(GomokuPiece.EMPTY));
+      () => new Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY));
     this.history = [];
-    this.winner = GomokuPiece.EMPTY;
+    this.winner = Piece.EMPTY;
   }
 
-  getBoardAt(row: number, col: number): GomokuPiece {
+  static fromHistory(history: readonly Move[]): GomokuCore {
+    const board = new GomokuCore();
+    for (let i = 0; i < history.length - 1; i += 1) {
+      // board.move(history[i][0], history[i][1]);
+      board.setBoardAt(history[i][0], history[i][1], board.getCurrentPlayer());
+      board.pushMove(history[i][0], history[i][1]);
+    }
+    board.move(history[history.length - 1][0], history[history.length - 1][1]);
+    return board;
+  }
+
+  getBoardAt(row: number, col: number): Piece {
     if (row < 0 || row >= GomokuCore.BOARD_SIZE || col < 0 || col >= GomokuCore.BOARD_SIZE) {
-      return GomokuPiece.BOARDER;
+      return Piece.BOARDER;
     }
     return this.board[row][col];
   }
 
-  setBoardAt(row: number, col: number, piece: GomokuPiece): void {
+  private setBoardAt(row: number, col: number, piece: Piece): void {
     if (row < 0 || row >= GomokuCore.BOARD_SIZE || col < 0 || col >= GomokuCore.BOARD_SIZE) {
       return;
     }
     this.board[row][col] = piece;
   }
 
-  getBoard(): readonly GomokuPiece[][] {
+  getBoard(): readonly Piece[][] {
     return this.board;
   }
 
-  getCurrentPlayer(): GomokuPiece {
-    return this.history.length % 2 === 0 ? GomokuPiece.BLACK : GomokuPiece.WHITE;
+  getCurrentPlayer(): Piece {
+    return this.history.length % 2 === 0 ? Piece.BLACK : Piece.WHITE;
   }
 
-  getLastMove(): readonly [number, number] | null {
+  getLastMove(): Move | null {
     if (this.history.length === 0) {
       return null;
     }
     return this.history[this.history.length - 1];
   }
 
-  pushMove(row: number, col: number): void {
+  private pushMove(row: number, col: number): void {
     this.history.push([row, col]);
   }
 
-  popMove(): readonly [number, number] | null {
+  private popMove(): Move | null {
     const last = this.history.pop();
     if (last) return last;
     return null;
   }
 
-  getWinner(): GomokuPiece {
+  getWinner(): Piece {
     return this.winner;
   }
 
-  checkWinner(row: number, col: number, piece: GomokuPiece): void {
+  private checkWinner(row: number, col: number, piece: Piece): void {
     // check horizontal
     for (let k = -5; k <= 5; k += 1) {
       if (this.getBoardAt(row, col + k) === piece) {
@@ -123,9 +128,9 @@ export default class GomokuCore {
     }
   }
 
-  move(row: number, col: number): GomokuPiece | null {
+  move(row: number, col: number): Piece | null {
     const piece = this.getCurrentPlayer();
-    if (this.getBoardAt(row, col) === GomokuPiece.EMPTY) {
+    if (this.getBoardAt(row, col) === Piece.EMPTY) {
       this.setBoardAt(row, col, piece);
       this.pushMove(row, col);
       this.checkWinner(row, col, piece);
@@ -134,11 +139,11 @@ export default class GomokuCore {
     return null;
   }
 
-  withdraw(): readonly [number, number] | null {
+  withdraw(): Move | null {
     const lastMove = this.popMove();
     if (lastMove)
-      this.setBoardAt(lastMove[0], lastMove[1], GomokuPiece.EMPTY);
-      this.winner = GomokuPiece.EMPTY;
+      this.setBoardAt(lastMove[0], lastMove[1], Piece.EMPTY);
+      this.winner = Piece.EMPTY;
     return lastMove;
   }
 }

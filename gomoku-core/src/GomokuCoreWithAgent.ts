@@ -1,42 +1,32 @@
-import GomokuCore, { GomokuPiece } from './GomokuCore';
-import MonteCarloTreeNode from './MonteCarloTreeNode';
+import GomokuCore, { Piece } from './GomokuCore';
+import MonteCarloTreeNode from './utils/MonteCarloTreeNode';
 
 export default class GomokuCoreWithAgent extends GomokuCore {
-  curr: MonteCarloTreeNode;
+  private node: MonteCarloTreeNode;
 
   constructor() {
     super();
-    this.curr = new MonteCarloTreeNode();
+    this.node = new MonteCarloTreeNode;
   }
 
-  getNextNode(row: number, col: number): MonteCarloTreeNode {
-    let nextNode: MonteCarloTreeNode = this.curr;
-    if (this.curr.children.length === 0) this.curr.expand();
-    for (let i = 0; i < this.curr.children.length; i += 1) {
-      if (this.curr.children[i].move![0] === row && this.curr.children[i].move![1] === col) {
-        nextNode = this.curr.children[i];
-      }
+  private getNextNode(row: number, col: number): MonteCarloTreeNode {
+    let nextNode = this.node.children.get([row, col]);
+    if (!nextNode) {
+      nextNode = new MonteCarloTreeNode([row, col], this.node);
+      this.node.children.set([row, col], nextNode);
     }
     return nextNode;
   }
 
-  move(row: number, col: number): GomokuPiece | null {
+  override move(row: number, col: number): Piece | null {
     const piece = super.move(row, col);
-    if (piece) {
-      this.curr = this.getNextNode(row, col);
-    }
+    if (piece) this.node = this.getNextNode(row, col);
     return piece;
   }
 
-  counterMove(): readonly [number, number] {
-    const [row, col] = this.curr.mcts()!;
-    this.move(row, col);
-    return [row, col];
-  }
-
-  withdraw(): readonly [number, number] | null {
+  override withdraw(): readonly [number, number] | null {
     const pos = super.withdraw();
-    if (pos) this.curr = this.curr.parent!;
+    if (pos) this.node = this.node.parent!;
     return pos;
   }
 }

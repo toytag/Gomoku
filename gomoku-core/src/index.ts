@@ -1,12 +1,13 @@
+import GomokuCoreWithAgent from './GomokuCoreWithAgent';
+
+export default GomokuCoreWithAgent;
+
 export {
-  GomokuPiece,
   default as GomokuCore,
+  Piece,
+  Move
 } from './GomokuCore';
 
 export {
   default as MonteCarloTreeNode,
-} from './MonteCarloTreeNode';
-
-export {
-  default as GomokuCoreWithAgent,
-} from './GomokuCoreWithAgent';
+} from './utils/MonteCarloTreeNode';
