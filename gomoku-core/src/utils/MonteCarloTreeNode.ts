@@ -1,12 +1,23 @@
-import GomokuCore, { Piece, Move } from '../GomokuCore';
-import MoveSet from './MoveSet';
-import MoveMap from './MoveMap';
+import GomokuCore, { Piece, Move } from './GomokuCore';
 
 const UCB1_C = 2;
 const TIME_LIMIT_MS = 3000;
-const SIMULATION_LIMIT = 100000;
-const EXPANSION_THRESHOLD = 1000;
-const SIMULATION_BATCH_SIZE = 100;
+const SIMULATION_LIMIT = 50000;
+const EXPANSION_THRESHOLD = 10;
+const SIMULATION_BATCH_SIZE = 1;
+
+const timeReport = {
+  total: 0,
+  selection: 0,
+  expansion: 0,
+  simulation: {
+    total: 0,
+    preparation: 0,
+    playout: 0,
+  },
+  backpropagation: 0,
+  // minimax: 0,
+};
 
 function shuffle<Type>(array: Type[]): Type[] {
   const ret = [...array];
@@ -24,21 +35,11 @@ export default class MonteCarloTreeNode {
 
   parent: MonteCarloTreeNode | null;
 
-  children: MoveMap<MonteCarloTreeNode>;
+  children: Map<string, MonteCarloTreeNode>;
 
   visits: number;
 
   wins: number;
-
-  static lessThan(a: MonteCarloTreeNode, b: MonteCarloTreeNode): boolean {
-    const aUCB1 = a.ucb1();
-    const bUCB1 = b.ucb1();
-    return (
-      aUCB1 < bUCB1
-      || (aUCB1 === bUCB1 && a.visits < b.visits)
-      || (aUCB1 === bUCB1 && a.visits === b.visits && a.wins < b.wins)
-    );
-  }
 
   constructor(
     move: MonteCarloTreeNode['move'] = null,
@@ -46,27 +47,25 @@ export default class MonteCarloTreeNode {
   ) {
     this.move = move;
     this.parent = parent;
-    this.children = new MoveMap;
+    this.children = new Map<string, MonteCarloTreeNode>();
     this.visits = 0;
     this.wins = 0;
   }
 
-  approxWinningRate(eps: number = 1e-4): number {
+  approxWinningRate(eps: number = 1e-8): number {
     return this.wins / (this.visits + eps);
   }
 
-  ucb1(eps: number = 1e-4): number {
+  ucb1(eps: number = 1e-8): number {
     return this.approxWinningRate(eps) + Math.sqrt(
-      UCB1_C * Math.log(this.parent ? this.parent.visits : this.visits) / (this.visits + eps));
+      UCB1_C * Math.log(this.parent ? this.parent.visits : 0) / (this.visits + eps));
   }
 
   select(): MonteCarloTreeNode {
     // select the child with the highest ucb1 value
-    // or the child with the highest visits if ucb1 values are equal
-    // or the child with the highest wins if ucb1 and visits values are equal
     let bestChild: MonteCarloTreeNode | null = null;
     this.children.forEach((child: MonteCarloTreeNode) => {
-      if (!bestChild || MonteCarloTreeNode.lessThan(bestChild, child))
+      if (!bestChild || bestChild.ucb1() < child.ucb1())
         bestChild = child;
     });
     return bestChild!;
@@ -83,18 +82,30 @@ export default class MonteCarloTreeNode {
   }
 
   expansionMoves(history: Move[] = this.completeHistory()): Move[] {
-    const historySet = MoveSet.fromArray(history);
-    const expansionMoveSet = new MoveSet;
-    for (let historyIdx = 0; historyIdx < history.length; historyIdx += 1) {
-      for (let i = -2; i <= 2; i += 1) {
-        for (let j = -2; j <= 2; j += 1) {
-          const [row, col] = history[historyIdx];
+    const historySet = new Set<string>();
+    for (let i = 0; i < history.length; i += 1) {
+      historySet.add(history[i].toString());
+    }
+    const moveSet = new Set<string>();
+    const moves: Move[] = [];
+    for (let idx = 0; idx < history.length; idx += 1) {
+      for (let i = -1; i <= 1; i += 1) {
+        for (let j = -1; j <= 1; j += 1) {
+          const [row, col] = history[idx];
           const move: Move = [row + i, col + j];
-          if (!historySet.has(move)) expansionMoveSet.add(move);
+          if (
+            !historySet.has(move.toString()) 
+            && !moveSet.has(move.toString())
+            && move[0] >= 0 && move[0] < GomokuCore.BOARD_SIZE
+            && move[1] >= 0 && move[1] < GomokuCore.BOARD_SIZE
+          ) {
+            moveSet.add(move.toString());
+            moves.push(move);
+          }
         }
       }
     }
-    return shuffle(Array.from(expansionMoveSet));
+    return shuffle(moves);
   }
 
   expand(): void {
@@ -103,16 +114,19 @@ export default class MonteCarloTreeNode {
     const moves = this.expansionMoves();
     for (let i = 0; i < moves.length; i += 1) {
       const child = new MonteCarloTreeNode(moves[i], this);
-      this.children.set(moves[i], child);
+      this.children.set(moves[i].toString(), child);
     }
   }
 
   simulationMoves(history: Move[] = this.completeHistory()): Move[] {
-    const historySet = MoveSet.fromArray(history);
+    const historySet = new Set<string>();
+    for (let i = 0; i < history.length; i += 1) {
+      historySet.add(history[i].toString());
+    }
     const moves: Move[] = [];
     for (let i = 0; i < GomokuCore.BOARD_SIZE; i += 1) {
       for (let j = 0; j < GomokuCore.BOARD_SIZE; j += 1) {
-        if (!historySet.has([i, j])) {
+        if (!historySet.has([i, j].toString())) {
           moves.push([i, j]);
         }
       }
@@ -121,23 +135,39 @@ export default class MonteCarloTreeNode {
   }
 
   simulate(): { player: Piece, winner: Piece } {
+    let timestamp = Date.now();
+
     // build complete history for simluation
     const history = this.completeHistory();
     // rebuild game using complete history
     const sim = GomokuCore.fromHistory(history);
     // get current player
-    const player = sim.getCurrentPlayer();
+    const player = sim.getCurrentPlayer() === Piece.BLACK ? Piece.WHITE : Piece.BLACK;
     // check if game ends
     if (sim.getWinner() !== Piece.EMPTY)
       return { player, winner: sim.getWinner() };
+    // console.log(`Simulation preparation time: ${Date.now() - timestamp}`);
+
+    timeReport.simulation.preparation += Date.now() - timestamp;
+    timestamp = Date.now();
+
     // random playout
     const moves = this.simulationMoves(history);
     for (let i = 0; i < moves.length; i += 1) {
-      const move = moves[i];
-      sim.move(move[0], move[1]);
-      if (sim.getWinner() !== Piece.EMPTY)
+      const [row, col] = moves[i];
+      sim.move(row, col);
+      if (sim.getWinner() !== Piece.EMPTY) {
+        timeReport.simulation.playout += Date.now() - timestamp;
+        timestamp = Date.now();
+
         return { player, winner: sim.getWinner() }
+
+      }
     }
+
+    timeReport.simulation.playout += Date.now() - timestamp;
+    timestamp = Date.now();
+
     // return simulation result
     return { player, winner: Piece.EMPTY };
   }
@@ -158,37 +188,105 @@ export default class MonteCarloTreeNode {
     const startTime = Date.now();
     while (Date.now() - startTime < TIME_LIMIT_MS && simCount < SIMULATION_LIMIT) {
       let node: MonteCarloTreeNode = this;
+      
+      let timestamp = Date.now();
+      
       // selection
       while (node.children.size > 0) {
         node = node.select();
       }
+
+      timeReport.selection += Date.now() - timestamp;
+      timestamp = Date.now();
+
       // expansion
       if (node.visits > EXPANSION_THRESHOLD && node.approxWinningRate(0) !== 1) {
         node.expand();
         node = node.select();
       }
+
+      timeReport.expansion += Date.now() - timestamp;
+      timestamp = Date.now();
+
       // simulation and backpropagation
       for (let i = 0; i < SIMULATION_BATCH_SIZE; i += 1) {
         // simulation
         const simResult = node.simulate();
         simCount += 1;
+
+        timeReport.simulation.total += Date.now() - timestamp;
+        timestamp = Date.now();
+
         // backpropagation
         node.backpropagate(simResult);
+
+        timeReport.backpropagation += Date.now() - timestamp;
+        timestamp = Date.now();
       }
     }
-    // console.log(`simCount: ${simCount}`);
+    timeReport.total += Date.now() - startTime;
+    console.log(`Simulation time report: ${JSON.stringify(timeReport)}`);
+    console.log(`simCount: ${simCount}`);
   }
 
+  // minimax(depth: number, maximizing: boolean): number {
+  //   if (depth === 0) {
+  //     return this.approxWinningRate();
+  //   }
+
+  //   let best: number = maximizing ? -Infinity : Infinity;
+  //   this.children.forEach((child: MonteCarloTreeNode) => {
+  //     const score = child.minimax(depth - 1, !maximizing);
+  //     if (maximizing) {
+  //       best = Math.max(best, score);
+  //     } else {
+  //       best = Math.min(best, score);
+  //     }
+  //   });
+  //   if (Math.abs(best) === Infinity) {
+  //     if (maximizing) {
+  //       best = this.approxWinningRate();
+  //     } else {
+  //       best = 1 - this.approxWinningRate();
+  //     }
+  //   }
+  //   return best;
+  // }
+
+  // // depth must be odd on self
+  // bestMove(depth: number = 3): Move {
+  //   let timestamp = Date.now();
+
+  //   // select the child with the highest ucb1 value
+  //   let bestScore: number = -Infinity;
+  //   let bestChild: MonteCarloTreeNode | null = null;
+  //   this.children.forEach((child: MonteCarloTreeNode) => {
+  //     // consider this as one depth down
+  //     const score = child.minimax(depth - 1, false);
+  //     if (!bestChild || bestScore < score) {
+  //       bestScore = score;
+  //       bestChild = child;
+  //     }
+  //   });
+    
+  //   console.log(`Best move selection time: ${Date.now() - timestamp}`);
+
+  //   return bestChild!.move!;
+  // }
+
   bestMove(): Move {
-    let maxWR = -Infinity;
-    let bestMove: Move;
+    let timestamp = Date.now();
+
+    // select the child with the highest winning rate
+    let bestChild: MonteCarloTreeNode | null = null;
     this.children.forEach((child: MonteCarloTreeNode) => {
-      const wr = child.approxWinningRate();
-      if (wr > maxWR) {
-        maxWR = wr;
-        bestMove = child.move!;
+      if (!bestChild || bestChild.approxWinningRate() < child.approxWinningRate()) {
+        bestChild = child;
       }
     });
-    return bestMove!;
+
+    console.log(`Best move selection time: ${Date.now() - timestamp}`);
+
+    return bestChild!.move!;
   }
 }

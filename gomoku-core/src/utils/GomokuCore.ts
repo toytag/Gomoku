@@ -38,6 +38,7 @@ export default class GomokuCore {
     if (row < 0 || row >= GomokuCore.BOARD_SIZE || col < 0 || col >= GomokuCore.BOARD_SIZE) {
       return Piece.BOARDER;
     }
+    // console.log(this.board[row][col]);
     return this.board[row][col];
   }
 
@@ -79,7 +80,7 @@ export default class GomokuCore {
 
   private checkWinner(row: number, col: number, piece: Piece): void {
     // check horizontal
-    for (let k = -5; k <= 5; k += 1) {
+    for (let k = -5; k < 5; k += 1) {
       if (this.getBoardAt(row, col + k) === piece) {
         const start = k;
         while (this.getBoardAt(row, col + k + 1) === piece) k += 1;
@@ -91,7 +92,7 @@ export default class GomokuCore {
       }
     }
     // check vertical
-    for (let k = -5; k <= 5; k += 1) {
+    for (let k = -5; k < 5; k += 1) {
       if (this.getBoardAt(row + k, col) === piece) {
         const start = k;
         while (this.getBoardAt(row + k + 1, col) === piece) k += 1;
@@ -103,7 +104,7 @@ export default class GomokuCore {
       }
     }
     // check diagonal
-    for (let k = -5; k <= 5; k += 1) {
+    for (let k = -5; k < 5; k += 1) {
       if (this.getBoardAt(row + k, col + k) === piece) {
         const start = k;
         while (this.getBoardAt(row + k + 1, col + k + 1) === piece) k += 1;
@@ -115,7 +116,7 @@ export default class GomokuCore {
       }
     }
     // check anti-diagonal
-    for (let k = -5; k <= 5; k += 1) {
+    for (let k = -5; k < 5; k += 1) {
       if (this.getBoardAt(row + k, col - k) === piece) {
         const start = k;
         while (this.getBoardAt(row + k + 1, col - k - 1) === piece) k += 1;
@@ -145,5 +146,12 @@ export default class GomokuCore {
       this.setBoardAt(lastMove[0], lastMove[1], Piece.EMPTY);
       this.winner = Piece.EMPTY;
     return lastMove;
+  }
+
+  reset(): void {
+    this.board = new Array(GomokuCore.BOARD_SIZE).fill(0).map(
+      () => new Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY));
+    this.history = [];
+    this.winner = Piece.EMPTY;
   }
 }

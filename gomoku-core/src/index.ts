@@ -3,10 +3,10 @@ import GomokuCoreWithAgent from './GomokuCoreWithAgent';
 export default GomokuCoreWithAgent;
 
 export {
-  default as GomokuCore,
   Piece,
-  Move
-} from './GomokuCore';
+  Move,
+  default as GomokuCore,
+} from './utils/GomokuCore';
 
 export {
   default as MonteCarloTreeNode,

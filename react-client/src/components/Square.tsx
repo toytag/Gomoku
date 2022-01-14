@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // material-ui
 import styled from '@mui/system/styled';
 import IconButton from '@mui/material/IconButton';
 import Fade from '@mui/material/Fade';
 // redux
-import { GomokuPiece } from 'gomoku-core';
+import { Piece, Move } from 'gomoku-core';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  selectPiece, selectWinner, move,
+  selectGomoku, selectPiece, selectWinner, move,
 } from '../redux/backendSlice';
 
 const StyledIconButton = styled(IconButton)({
@@ -29,24 +29,32 @@ const StyledImg = styled('img')({
 });
 
 export default function Square({ row, col } : { row: number, col: number }) {
-  // const wasmModule = useAppSelector(selectModule);
+  // const gomoku = useAppSelector(selectGomoku);
   const piece = useAppSelector(selectPiece(row, col));
   const winner = useAppSelector(selectWinner);
   const dispatch = useAppDispatch();
 
+  // useEffect(() => {
+  //   console.log(gomoku.search());
+  // }, []);
+
   return (
     <StyledIconButton
-      onClick={async () => dispatch(move({ row, col }))}
-      disabled={piece !== GomokuPiece.EMPTY || winner !== GomokuPiece.EMPTY}
+      onClick={() => {
+        dispatch(move([row, col] as Move));
+        // new Promise((resolve) => gomoku.search());
+        // dispatch(searchAsync());
+      }}
+      disabled={piece !== Piece.EMPTY || winner !== Piece.EMPTY}
       disableTouchRipple
     >
-      <Fade in={piece === GomokuPiece.EMPTY}>
+      <Fade in={piece === Piece.EMPTY}>
         <StyledImg src="assets/images/empty.svg" alt="empty" />
       </Fade>
-      <Fade in={piece === GomokuPiece.BLACK}>
+      <Fade in={piece === Piece.BLACK}>
         <StyledImg src="assets/images/black.svg" alt="black" />
       </Fade>
-      <Fade in={piece === GomokuPiece.WHITE}>
+      <Fade in={piece === Piece.WHITE}>
         <StyledImg src="assets/images/white.svg" alt="white" />
       </Fade>
     </StyledIconButton>

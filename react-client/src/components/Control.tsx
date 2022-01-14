@@ -5,16 +5,17 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 // redux
-import { GomokuPiece } from 'gomoku-core';
+import { Piece } from 'gomoku-core';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  selectWinner, withdraw, reset,
+  selectWinner, selectStatus, withdraw, reset, searchAsync,
 } from '../redux/backendSlice';
 
 const StyledGreenText = styled('span')(({ theme }) => ({
@@ -27,6 +28,7 @@ const StyledRedText = styled('span')(({ theme }) => ({
 
 export default function Control() {
   const winner = useAppSelector(selectWinner);
+  const status = useAppSelector(selectStatus);
   // check if status === 'loaded' before using
   // const status = useAppSelector(selectStatus);
   const dispatch = useAppDispatch();
@@ -36,7 +38,7 @@ export default function Control() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const [gameEndDialogOpen, setGameEndDialogOpen] = useState(false);
   useEffect(() => {
-    setGameEndDialogOpen(winner !== GomokuPiece.EMPTY);
+    setGameEndDialogOpen(winner !== Piece.EMPTY);
   }, [winner]);
 
   const handleWithdraw = () => dispatch(withdraw());
@@ -55,18 +57,19 @@ export default function Control() {
         orientation={smallScreen ? 'horizontal' : 'vertical'}
       >
 
-        <Button
+        <LoadingButton
           variant="contained"
-          disabled
+          disabled={status === 'open'}
+          loading={status === 'searching'}
+          onClick={() => dispatch(searchAsync())}
         >
           Hint
-        </Button>
+        </LoadingButton>
 
         <Button
           variant="contained"
           color="success"
           onClick={handleWithdraw}
-          // disabled={status !== 'loaded'}
         >
           Withdraw
         </Button>
@@ -75,7 +78,6 @@ export default function Control() {
           variant="contained"
           color="error"
           onClick={handleRestart}
-          // disabled={status !== 'loaded'}
         >
           Restart
         </Button>
@@ -114,7 +116,7 @@ export default function Control() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {`${winner === GomokuPiece.BLACK ? 'BLACK' : 'WHITE'} is the winner!`}
+          {`${winner === Piece.BLACK ? 'BLACK' : 'WHITE'} is the winner!`}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
