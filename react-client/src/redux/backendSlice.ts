@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import EventEmitter from 'events';
-// eslint-disable-next-line import/no-extraneous-dependencies
+// import EventEmitter from 'events';
+// eslint-disable-next-line
 import GomokuCoreWithAgent, { Piece, Move, GomokuCore } from 'gomoku-core';
 import type { AppThunk, RootState } from './store';
 
@@ -38,13 +38,16 @@ export const selectGomoku = (state: RootState) => state.backend.gomoku;
 export const searchAsync = createAsyncThunk(
   'backend/search',
   async (_args, { dispatch, getState }) => {
-    const gomoku = selectGomoku(getState() as RootState);
-    const worker = new Worker('./worker.js');
-    worker.postMessage({ gomoku });
-    worker.onmessage = (e) => {
-      const move = e.data as Move;
-      console.log(move);
-    };
+    // const gomoku = selectGomoku(getState() as RootState);
+    console.log('searchAsync started');
+    // const worker = new Worker();
+    // console.log(await instance.heavyLoad(10));
+    console.log('searchAsync finished');
+    // worker.postMessage({ gomoku });
+    // worker.onmessage = (e) => {
+    //   const move = e.data as Move;
+    //   console.log(move);
+    // };
     // console.log('searchAsync');
     // const move = await worker(gomoku);
     // console.log('move', move);
@@ -92,7 +95,7 @@ export const backendSlice = createSlice({
         state.status = 'searching';
       })
       .addCase(searchAsync.fulfilled, (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         // const  = action.payload;
         // state.gomoku.move(row, col);
         // state.board[row][col] = state.gomoku.getBoardAt(row, col);

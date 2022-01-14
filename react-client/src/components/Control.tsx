@@ -18,6 +18,8 @@ import {
   selectWinner, selectStatus, withdraw, reset, searchAsync,
 } from '../redux/backendSlice';
 
+import Worker from './worker';
+
 const StyledGreenText = styled('span')(({ theme }) => ({
   color: theme.palette.success.main,
 }));
@@ -25,6 +27,8 @@ const StyledGreenText = styled('span')(({ theme }) => ({
 const StyledRedText = styled('span')(({ theme }) => ({
   color: theme.palette.error.main,
 }));
+
+const inst = new Worker();
 
 export default function Control() {
   const winner = useAppSelector(selectWinner);
@@ -61,7 +65,10 @@ export default function Control() {
           variant="contained"
           disabled={status === 'open'}
           loading={status === 'searching'}
-          onClick={() => dispatch(searchAsync())}
+          onClick={async () => {
+            console.log(await inst.heavyLoad(10000));
+            dispatch(searchAsync());
+          }}
         >
           Hint
         </LoadingButton>

@@ -37,10 +37,8 @@ export default class GomokuCoreWithAgent extends GomokuCore {
     }
   }
 
-  search(): Promise<Move> {
-    return new Promise<Move>((resolve) => {
-      this.node.mcts();
-      resolve(this.node.bestMove());
-    });
+  search(): Move {
+    this.node.mcts();
+    return this.node.bestMove();
   }
 }
