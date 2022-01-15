@@ -21,33 +21,33 @@ jobs:
       with:
         node-version: 16.x
 
-    - name: install
+    - name: gomoku-core-install
       run: npm install
       working-directory: gomoku-core
-    # - name: lint
+    # - name: gomoku-core-lint
     #   run: yarn lint
     #   working-directory: gomoku-core
-    # - name: test
+    # - name: gomoku-core-test
     #   run: npm run test
     #   working-directory: gomoku-core
-    - name: build
+    - name: gomoku-core-build
       run: npm run build
       working-directory: gomoku-core
 
-    - name: install
+    - name: react-client-install
       run: npm install
       working-directory: react-client
-    # - name: lint
+    # - name: react-client-lint
     #   run: npm run lint
     #   working-directory: react-client
-    # - name: test
+    # - name: react-client-test
     #   run: npm run test
     #   working-directory: react-client
-    - name: build
+    - name: react-client-build
       run: npm run build
       working-directory: react-client
 
-    - name: upload-react-build
+    - name: upload-build
       uses: actions/upload-artifact@v2
       with:
         name: build
@@ -62,13 +62,13 @@ jobs:
     - name: download-react-build
       uses: actions/download-artifact@v2
       with:
-        name: react-client-build
-        path: react-client/build
+        name: build
+        path: ./build
 
     - name: deploy
       uses: crazy-max/ghaction-github-pages@v2
       with:
         # Build directory to deploy
-        build_dir: react-client/build
+        build_dir: ./build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
