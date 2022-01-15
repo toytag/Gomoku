@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 // material-ui
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 // redux
 // import { useAppDispatch, useAppSelector } from '../redux/hooks';
 // import { selectStatus, initAsync } from '../redux/backendSlice';
-import { Piece, GomokuCore } from 'gomoku-core';
+import { Piece, Board as B } from 'gomoku-core';
 // components
 import Square from './Square';
 
@@ -35,8 +35,7 @@ export default function Board() {
       }}
     >
       <img src="assets/images/board.svg" alt="board" width="100%" height="100%" />
-      {Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY)
-        .map(() => Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY))
+      {Array(B.SIZE).fill(0).map(() => Array(B.SIZE).fill(Piece.EMPTY))
         .map((row_: any[], i: number) => (
           row_.map((_, j: number) => (
             <Box

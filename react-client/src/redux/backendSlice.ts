@@ -1,119 +1,135 @@
+/* eslint-disable max-len */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 // import EventEmitter from 'events';
 // eslint-disable-next-line
-import GomokuCoreWithAgent, { Piece, Move, GomokuCore } from 'gomoku-core';
-import type { AppThunk, RootState } from './store';
+import GomokuCoreWithAgent, { Move, Piece, Board as B } from 'gomoku-core';
+import type { RootState } from './store';
+
+import Worker from './worker';
 
 export interface BackendState {
-  gomoku: GomokuCoreWithAgent;
+  worker: Worker;
+  // gomoku: GomokuCoreWithAgent;
   mode: 'pve' | 'pvp';
   board: Piece[][];
   winner: Piece;
-  status: 'open' | 'idle' | 'searching';
+  status: 'idle' | 'busy';
 }
 
 const initialState: BackendState = {
-  gomoku: new GomokuCoreWithAgent(),
-  mode: 'pvp',
-  board: new Array(GomokuCore.BOARD_SIZE).fill(0)
-    .map(() => new Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY)),
+  worker: new Worker(),
+  // gomoku: new GomokuCoreWithAgent(),
+  mode: 'pve',
+  board: Array(B.SIZE).fill(0).map(() => Array(B.SIZE).fill(Piece.EMPTY)),
   winner: Piece.EMPTY,
-  status: 'open',
+  status: 'idle',
 };
 
-// async function worker(gomoku: GomokuCoreWithAgent) {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve(gomoku.search());
-//     }, 0);
-//   });
-// }
+export const selectWorker = (state: RootState) => state.backend.worker;
+export const selectMode = (state: RootState) => state.backend.mode;
+// eslint-disable-next-line max-len
+export const selectPiece = (row: number, col: number) => (state: RootState) => state.backend.board[row][col];
+export const selectWinner = (state: RootState) => state.backend.winner;
+export const selectStatus = (state: RootState) => state.backend.status;
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
-export const selectGomoku = (state: RootState) => state.backend.gomoku;
+export const moveAsync = createAsyncThunk(
+  'backend/move',
+  async (move: Move, { getState }): Promise<{ move: Move, piece: Piece, winner: Piece }> => {
+    const worker = selectWorker(getState() as RootState);
+    const [row, col] = move;
+    await worker.move(row, col);
+    const piece = await worker.getBoardAt(row, col);
+    const winner = await worker.getWinner();
+    return { move, piece, winner };
+  },
+);
+
+export const withdrawAsync = createAsyncThunk(
+  'backend/withdraw',
+  async (_, { getState }): Promise<{ move: Move | null, lastMove: Move | null, winner: Piece }> => {
+    const worker = selectWorker(getState() as RootState);
+    const move = await worker.withdraw();
+    const lastMove = await worker.getLastMove();
+    const winner = await worker.getWinner();
+    return { move, lastMove, winner };
+  },
+);
+
+export const resetAsync = createAsyncThunk(
+  'backend/reset',
+  async (_, { getState }): Promise<void> => {
+    const worker = selectWorker(getState() as RootState);
+    await worker.reset();
+  },
+);
+
 export const searchAsync = createAsyncThunk(
   'backend/search',
-  async (_args, { dispatch, getState }) => {
-    // const gomoku = selectGomoku(getState() as RootState);
-    console.log('searchAsync started');
-    // const worker = new Worker();
-    // console.log(await instance.heavyLoad(10));
-    console.log('searchAsync finished');
-    // worker.postMessage({ gomoku });
-    // worker.onmessage = (e) => {
-    //   const move = e.data as Move;
-    //   console.log(move);
-    // };
-    // console.log('searchAsync');
-    // const move = await worker(gomoku);
-    // console.log('move', move);
-    // return move;
-    // The value we return becomes the `fulfilled` action payload
+  async (_, { dispatch, getState }): Promise<void> => {
+    const worker = selectWorker(getState() as RootState);
+    const move = await worker.search();
+    if (move) {
+      await dispatch(moveAsync(move));
+    }
+  },
+);
+
+export const counterMoveAsync = createAsyncThunk(
+  'backend/counterMove',
+  async (_, { dispatch, getState }): Promise<void> => {
+    const mode = selectMode(getState() as RootState);
+    if (mode === 'pve') {
+      await dispatch(searchAsync());
+    }
   },
 );
 
 export const backendSlice = createSlice({
-  name: 'gomoku',
+  name: 'backend',
   initialState,
   reducers: {
     setMode: (state, action: PayloadAction<'pve' | 'pvp'>) => {
       state.mode = action.payload;
     },
-    move: (state, action: PayloadAction<Move>) => {
-      const [row, col] = action.payload;
-      state.gomoku.move(row, col);
-      state.board[row][col] = state.gomoku.getBoardAt(row, col);
-      state.winner = state.gomoku.getWinner();
-      state.status = 'idle';
-      // TODO: mode
-      // if (state.mode === 'pve') {
-      //   state.gomoku.search();
-      //   state.status = 'searching';
-      // }
-    },
-    withdraw: (state) => {
-      const pos = state.gomoku.withdraw();
-      if (pos) state.board[pos[0]][pos[1]] = Piece.EMPTY;
-      if (state.gomoku.getLastMove() === null) state.status = 'open';
-      state.winner = state.gomoku.getWinner();
-    },
-    reset: (state) => {
-      state.gomoku.reset();
-      state.board = new Array(GomokuCore.BOARD_SIZE).fill(0)
-        .map(() => new Array(GomokuCore.BOARD_SIZE).fill(Piece.EMPTY));
-      state.winner = Piece.EMPTY;
-      state.status = 'open';
-    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchAsync.pending, (state) => {
-        state.status = 'searching';
+      .addCase(
+        moveAsync.fulfilled,
+        (state, action: PayloadAction<{ move: Move, piece: Piece, winner: Piece }>) => {
+          const { move, piece, winner } = action.payload;
+          const [row, col] = move;
+          state.board[row][col] = piece;
+          state.winner = winner;
+          state.status = 'idle';
+        },
+      )
+      .addCase(
+        withdrawAsync.fulfilled,
+        (state, action: PayloadAction<{ move: Move | null, lastMove: Move | null, winner: Piece }>) => {
+          const { move, winner } = action.payload;
+          if (move) {
+            const [row, col] = move;
+            state.board[row][col] = Piece.EMPTY;
+          }
+          state.winner = winner;
+          state.status = 'idle';
+        },
+      )
+      .addCase(resetAsync.fulfilled, (state) => {
+        state.board = Array(B.SIZE).fill(0).map(() => Array(B.SIZE).fill(Piece.EMPTY));
+        state.winner = Piece.EMPTY;
+        state.status = 'idle';
       })
-      .addCase(searchAsync.fulfilled, (state, action) => {
-        // console.log(action.payload);
-        // const  = action.payload;
-        // state.gomoku.move(row, col);
-        // state.board[row][col] = state.gomoku.getBoardAt(row, col);
-        // state.winner = state.gomoku.getWinner();
+      .addCase(searchAsync.pending, (state) => {
+        state.status = 'busy';
+      })
+      .addCase(searchAsync.fulfilled, (state) => {
         state.status = 'idle';
       });
   },
 });
 
-export const {
-  setMode, move, withdraw, reset,
-} = backendSlice.actions;
-
-export const selectMode = (state: RootState) => state.backend.mode;
-// export const selectBoard = (state: RootState) => state.backend.board;
-// eslint-disable-next-line max-len
-export const selectPiece = (row: number, col: number) => (state: RootState) => state.backend.board[row][col];
-export const selectWinner = (state: RootState) => state.backend.winner;
-export const selectStatus = (state: RootState) => state.backend.status;
+export const { setMode } = backendSlice.actions;
 
 export default backendSlice.reducer;

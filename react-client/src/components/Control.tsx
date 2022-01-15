@@ -15,10 +15,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Piece } from 'gomoku-core';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
-  selectWinner, selectStatus, withdraw, reset, searchAsync,
+  selectWinner, selectStatus, withdrawAsync, resetAsync, searchAsync,
 } from '../redux/backendSlice';
-
-import Worker from './worker';
 
 const StyledGreenText = styled('span')(({ theme }) => ({
   color: theme.palette.success.main,
@@ -27,8 +25,6 @@ const StyledGreenText = styled('span')(({ theme }) => ({
 const StyledRedText = styled('span')(({ theme }) => ({
   color: theme.palette.error.main,
 }));
-
-const inst = new Worker();
 
 export default function Control() {
   const winner = useAppSelector(selectWinner);
@@ -45,11 +41,11 @@ export default function Control() {
     setGameEndDialogOpen(winner !== Piece.EMPTY);
   }, [winner]);
 
-  const handleWithdraw = () => dispatch(withdraw());
+  const handleWithdraw = () => dispatch(withdrawAsync());
   const handleRestart = () => setRestartDialogOpen(true);
   const handleRestartCancel = () => setRestartDialogOpen(false);
   const handleRestartConfirm = () => {
-    dispatch(reset());
+    dispatch(resetAsync());
     setRestartDialogOpen(false);
   };
   const handleGameEndContinue = () => setGameEndDialogOpen(false);
@@ -59,14 +55,14 @@ export default function Control() {
 
       <ButtonGroup
         orientation={smallScreen ? 'horizontal' : 'vertical'}
+        disabled={status !== 'idle'}
       >
 
         <LoadingButton
           variant="contained"
-          disabled={status === 'open'}
-          loading={status === 'searching'}
+          loading={status === 'busy'}
           onClick={async () => {
-            console.log(await inst.heavyLoad(10000));
+            // console.log(await inst.process(10000));
             dispatch(searchAsync());
           }}
         >
