@@ -10,33 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  wasm-build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup Emscripten toolchain
-      uses: mymindstorm/setup-emsdk@v11
-
-    - name: mkdir
-      run: mkdir -p build
-      working-directory: WasmModule
-    - name: cmake
-      run: emcmake cmake -S ./ -B ./build
-      working-directory: WasmModule
-    - name: make
-      run: emmake make -C ./build
-      working-directory: WasmModule
-    
-    - name: upload-wasm-build
-      uses: actions/upload-artifact@v2
-      with:
-        name: WasmModule-build
-        path: WasmModule/build
-  
   react-build:
-    needs: wasm-build
     runs-on: ubuntu-latest
 
     steps:
@@ -46,33 +20,27 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
-        cache: 'npm'
-        cache-dependency-path: client/package-lock.json
-
-    - name: download-wasm-build
-      uses: actions/download-artifact@v2
-      with:
-        name: WasmModule-build
-        path: WasmModule/build
+        cache: 'yarn-cache'
+        cache-dependency-path: react-client/yarn.lock
 
     - name: install
-      run: npm install
-      working-directory: client
+      run: yarn
+      working-directory: react-client
     - name: lint
-      run: npm run lint
-      working-directory: client
-    - name: test
-      run: npm run test
-      working-directory: client
+      run: yarn lint
+      working-directory: react-client
+    # - name: test
+    #   run: npm run test
+    #   working-directory: react-client
     - name: build
-      run: npm run build --if-present
-      working-directory: client
+      run: yarn build
+      working-directory: react-client
 
     - name: upload-react-build
       uses: actions/upload-artifact@v2
       with:
-        name: client-build
-        path: client/build
+        name: react-client-build
+        path: react-client/build
 
 
   gh-pages:
@@ -83,7 +51,7 @@ jobs:
     - name: download-react-build
       uses: actions/download-artifact@v2
       with:
-        name: client-build
+        name: react-client-build
         path: ./build
 
     - name: deploy
