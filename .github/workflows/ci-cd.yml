@@ -23,24 +23,37 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: react-client/yarn.lock
 
-    - name: install
-      run: cd react-client && yarn
-      # working-directory: react-client
-    - name: lint
-      run: yarn lint
-      # working-directory: react-client
-    # - name: test
-    #   run: npm run test
-    #   working-directory: react-client
-    - name: build
+    - name: gomoku-core-install
+      run: yarn
+      working-directory: gomoku-core
+    # - name: gomoku-core-lint
+    #   run: yarn lint
+    #   working-directory: gomoku-core
+    - name: gomoku-core-test
+      run: yarn test
+      working-directory: gomoku-core
+    - name: gomoku-core-build
       run: yarn build
-      # working-directory: react-client
+      working-directory: gomoku-core
+
+    - name: react-client-install
+      run: yarn
+      working-directory: react-client
+    - name: react-client-lint
+      run: yarn lint
+      working-directory: react-client
+    # - name: react-client-test
+    #   run: yarn test
+    #   working-directory: react-client
+    - name: react-client-build
+      run: yarn build
+      working-directory: react-client
 
     - name: upload-react-build
       uses: actions/upload-artifact@v2
       with:
         name: react-client-build
-        path: ./build
+        path: react-client/build
 
 
   gh-pages:

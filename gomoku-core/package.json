@@ -40,5 +40,13 @@
     "watch": "tsc -b -w",
     "clean": "rm -rf dist"
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map",
+    "dist/**/package.json",
+    "src/"
+  ],
   "dependencies": {}
 }
