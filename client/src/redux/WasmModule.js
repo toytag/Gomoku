@@ -1,1 +1,0 @@
-../../../WasmModule/build/WasmModule.js
