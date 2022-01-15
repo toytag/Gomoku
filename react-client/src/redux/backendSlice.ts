@@ -8,7 +8,7 @@ import type { RootState } from './store';
 import Worker from './worker';
 
 export interface BackendState {
-  worker: Worker;
+  worker: any;
   // gomoku: GomokuCoreWithAgent;
   mode: 'pve' | 'pvp';
   board: Piece[][];
@@ -17,13 +17,15 @@ export interface BackendState {
 }
 
 const initialState: BackendState = {
-  worker: new Worker(),
+  worker: Worker(),
   // gomoku: new GomokuCoreWithAgent(),
   mode: 'pve',
   board: Array(B.SIZE).fill(0).map(() => Array(B.SIZE).fill(Piece.EMPTY)),
   winner: Piece.EMPTY,
   status: 'idle',
 };
+
+// console.log('initialState', initialState.worker);
 
 export const selectWorker = (state: RootState) => state.backend.worker;
 export const selectMode = (state: RootState) => state.backend.mode;

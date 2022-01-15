@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  react-build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,44 +20,42 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
-        cache: 'yarn'
-        cache-dependency-path: react-client/yarn.lock
 
-    - name: gomoku-core-install
-      run: yarn
+    - name: install
+      run: npm install
       working-directory: gomoku-core
-    # - name: gomoku-core-lint
+    # - name: lint
     #   run: yarn lint
     #   working-directory: gomoku-core
-    - name: gomoku-core-test
-      run: yarn test
-      working-directory: gomoku-core
-    - name: gomoku-core-build
-      run: yarn build
+    # - name: test
+    #   run: npm run test
+    #   working-directory: gomoku-core
+    - name: build
+      run: npm run build
       working-directory: gomoku-core
 
-    - name: react-client-install
-      run: yarn
+    - name: install
+      run: npm install
       working-directory: react-client
-    - name: react-client-lint
-      run: yarn lint
-      working-directory: react-client
-    # - name: react-client-test
-    #   run: yarn test
+    # - name: lint
+    #   run: npm run lint
     #   working-directory: react-client
-    - name: react-client-build
-      run: yarn build
+    # - name: test
+    #   run: npm run test
+    #   working-directory: react-client
+    - name: build
+      run: npm run build
       working-directory: react-client
 
     - name: upload-react-build
       uses: actions/upload-artifact@v2
       with:
-        name: react-client-build
+        name: build
         path: react-client/build
 
 
   gh-pages:
-    needs: react-build
+    needs: build
     runs-on: ubuntu-latest
     
     steps:
@@ -65,12 +63,12 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: react-client-build
-        path: ./build
+        path: react-client/build
 
     - name: deploy
       uses: crazy-max/ghaction-github-pages@v2
       with:
         # Build directory to deploy
-        build_dir: ./build
+        build_dir: react-client/build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
