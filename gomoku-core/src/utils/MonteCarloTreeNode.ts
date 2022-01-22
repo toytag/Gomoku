@@ -145,11 +145,10 @@ export default class MonteCarloTreeNode {
     // rebuild game using complete history
     const sim = GomokuCore.fromHistory(history);
     // get current player
-    const player = sim.getCurrentPlayer() === Piece.BLACK ? Piece.WHITE : Piece.BLACK;
+    const player = (history.length - 1) % 2 === 0 ? Piece.BLACK : Piece.WHITE;
     // check if game ends
     if (sim.getWinner() !== Piece.EMPTY)
       return { player, winner: sim.getWinner() };
-    // console.log(`Simulation preparation time: ${Date.now() - timestamp}`);
 
     timeReport.simulation.preparation += Date.now() - timestamp;
     timestamp = Date.now();

@@ -24,12 +24,12 @@ jobs:
     - name: gomoku-core-install
       run: npm install
       working-directory: gomoku-core
-    # - name: gomoku-core-lint
-    #   run: yarn lint
-    #   working-directory: gomoku-core
-    # - name: gomoku-core-test
-    #   run: npm run test
-    #   working-directory: gomoku-core
+    - name: gomoku-core-lint
+      run: npm run lint
+      working-directory: gomoku-core
+    - name: gomoku-core-test
+      run: npm run test
+      working-directory: gomoku-core
     - name: gomoku-core-build
       run: npm run build
       working-directory: gomoku-core

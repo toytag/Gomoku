@@ -14,4 +14,6 @@ parserOptions:
     - tsconfig.json
 plugins:
   - '@typescript-eslint'
+ignorePatterns:
+  - "*.test.*"
 rules: {}
