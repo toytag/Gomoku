@@ -2,7 +2,7 @@
 
 # Gomoku
 
-Gomoku board game built with React, Redux, and C++ complied WebAssembly
+Gomoku board game built with React, Redux, and C++ compiled WebAssembly
 
 ![UI](https://github.com/toytag/Gomoku/blob/info/ui.jpg)
 
